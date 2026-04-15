@@ -7,8 +7,12 @@ import AuthForm from './components/AuthForm';
 import Header from './components/Header';
 import Constitution from './components/constitution'; 
 import Home from './components/home';
+import Ethics from './components/ethics'; 
 
-import { constitutionData } from './data'; 
+// МААЛЫМАТТАР - Бул жердеги аттарды СӨЗСҮЗ текшер!
+import { constitutionData } from './data/constitutionData'; 
+// Сүрөттө 'ethicsCodeData' деп жазылган, ошол атты колдонобуз
+import { ethicsCodeData } from './data/ethicsData'; 
 
 import './components/css/style.css';
 import './components/css/menu.css';
@@ -37,9 +41,17 @@ function App() {
             <Header user={user} />
             <div className="content-area">
               <Routes>
-                <Route path="/" element={<Home constitutionData={constitutionData} />} />
-                <Route path="/constitution" element={<Constitution data={constitutionData} />} />
-                <Route path="/ethics" element={<div style={{color:'white', padding:'20px'}}>Этика кодекси жакында...</div>} />
+                {/* 1. Башкы бет */}
+                <Route path="/" element={<Home constitutionData={constitutionData || []} />} />
+                
+                {/* 2. Конституция */}
+                <Route path="/constitution" element={<Constitution data={constitutionData || []} />} />
+                
+                {/* 3. Этика (ethicsCodeData өзгөрмөсүн жиберебиз) */}
+                <Route path="/ethics" element={<Ethics data={ethicsCodeData || []} />} />
+                
+                {/* 4. Мамлекеттик кызмат */}
+                <Route path="/service" element={<div style={{color:'white', padding:'20px'}}>Жакында...</div>} />
               </Routes>
             </div>
           </>

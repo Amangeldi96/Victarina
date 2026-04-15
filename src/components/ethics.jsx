@@ -1,45 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import './css/constitution.css';
 
-const Constitution = ({ data }) => {
+const Ethics = ({ data }) => {
   const [lang, setLang] = useState('ky'); 
   const [searchTerm, setSearchTerm] = useState('');
   const [openSection, setOpenSection] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
 
-  // 1. Издөө жана чыпкалоо (универсалдуу структура)
+  // 1. Издөө жана чыпкалоо (сенин 'section' жана 'clauses' талааларыңа ылайыкталды)
   const filteredSections = (data || []).map(item => {
-    // 'articles' же 'clauses' экөөнү тең текшеребиз
-    const list = item.articles || item.clauses || [];
-    const matched = list.filter(art => {
-      const titleText = art.title?.[lang] || "";
-      const contentText = art.content?.[lang] || "";
+    const matched = (item.clauses || []).filter(clause => {
+      const titleText = clause.title?.[lang] || "";
+      const contentText = clause.content?.[lang] || "";
       return (
         titleText.toLowerCase().includes(searchTerm.toLowerCase()) ||
         contentText.toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-    return { ...item, displayList: matched };
-  }).filter(item => item.displayList.length > 0);
+    return { ...item, clauses: matched };
+  }).filter(item => item.clauses.length > 0);
 
-  // 2. Биринчи жолу ачылганда биринчи статьяны тандап алуу
+  // 2. Маалымат келгенде биринчи пунктту автоматтык түрдө көрсөтүү
   useEffect(() => {
     if (!selectedArticle && data && data.length > 0) {
-      const firstList = data[0].articles || data[0].clauses || [];
-      if (firstList.length > 0) {
-        setSelectedArticle(firstList[0]);
+      if (data[0].clauses && data[0].clauses.length > 0) {
+        setSelectedArticle(data[0].clauses[0]);
       }
     }
   }, [data, selectedArticle]);
 
   if (!data || data.length === 0) {
-    return <div className="loader">Маалымат жүктөлүүдө...</div>;
+    return <div className="loader" style={{color: 'white', padding: '20px'}}>Этика кодекси жүктөлүүдө...</div>;
   }
 
   return (
     <div className="constitution-wrapper">
       <div className="article-sidebar">
         
+        {/* Тил алмаштыргыч */}
         <div className="language-switcher">
           <button 
             className={lang === 'ky' ? 'active-lang' : ''} 
@@ -51,16 +49,18 @@ const Constitution = ({ data }) => {
           >RU</button>
         </div>
 
+        {/* Издөө кутучасы */}
         <div className="search-box-container">
           <input
             className="search-input"
             type="text"
-            placeholder={lang === 'ky' ? "Издөө..." : "Поиск..."}
+            placeholder={lang === 'ky' ? "Кодекстен издөө..." : "Поиск по кодексу..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
+        {/* Бөлүмдөрдүн тизмеси */}
         <div className="article-list">
           {filteredSections.map((item, sIndex) => (
             <div key={item.id || sIndex} className="accordion-group">
@@ -68,19 +68,20 @@ const Constitution = ({ data }) => {
                 className={`accordion-title ${openSection === sIndex ? 'active' : ''}`}
                 onClick={() => setOpenSection(openSection === sIndex ? null : sIndex)}
               >
-                {/* 'title' же 'section' экөөнүн бирин чыгарат */}
-                <span>{item.title?.[lang] || item.section?.[lang]}</span>
+                {/* Сүрөттө 'section' деп турат, ошону алдык */}
+                <span>{item.section?.[lang]}</span>
                 <span className="arrow">{openSection === sIndex ? '−' : '+'}</span>
               </div>
               
               <div className={`accordion-content ${openSection === sIndex ? 'show' : ''}`}>
-                {item.displayList.map((art) => (
+                {/* Сүрөттө 'clauses' деп турат */}
+                {item.clauses.map((clause) => (
                   <div 
-                    key={art.id} 
-                    className={`sub-article-item ${selectedArticle?.id === art.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedArticle(art)}
+                    key={clause.id} 
+                    className={`sub-article-item ${selectedArticle?.id === clause.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedArticle(clause)}
                   >
-                    {art.title?.[lang]}
+                    {clause.title?.[lang]}
                   </div>
                 ))}
               </div>
@@ -89,18 +90,19 @@ const Constitution = ({ data }) => {
         </div>
       </div>
 
+      {/* Негизги текст талаасы */}
       <div className="article-content">
         {selectedArticle ? (
           <div className="content-card">
             <h1 className="active-title-name">{selectedArticle.title?.[lang]}</h1>
             <div className="accent-line"></div>
-            <p className="content-text" style={{ whiteSpace: 'pre-wrap' }}>
+            <p className="content-text" style={{ whiteSpace: 'pre-line' }}>
               {selectedArticle.content?.[lang]}
             </p>
           </div>
         ) : (
           <div style={{ textAlign: 'center', marginTop: '50px', color: '#999' }}>
-            {lang === 'ky' ? "Тандаңыз..." : "Выберите..."}
+            {lang === 'ky' ? "Пунктту тандаңыз" : "Выберите пункт"}
           </div>
         )}
       </div>
@@ -108,4 +110,4 @@ const Constitution = ({ data }) => {
   );
 };
 
-export default Constitution;
+export default Ethics;
