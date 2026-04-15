@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Компоненттерди импорттоо
 import AuthForm from './components/AuthForm';
 import Header from './components/Header';
-import Constitution from './components/constitution'; 
+import Constitution from './components/constitution';
 
 // Стилдер
 import './components/css/style.css';
