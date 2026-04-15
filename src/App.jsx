@@ -4,9 +4,9 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Компоненттерди импорттоо
-import AuthForm from './components/AuthForm';
-import Header from './components/Header';
-import Constitution from './components/constitution';
+import AuthForm from './src/components/AuthForm';
+import Header from './src/components/Header';
+import Constitution from './src/components/Constitution';
 
 // Стилдер
 import './components/css/style.css';
