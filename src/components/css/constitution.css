@@ -170,3 +170,27 @@
     padding: 25px;
   }
 }
+
+.language-switcher {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  justify-content: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.language-switcher button {
+  padding: 6px 15px;
+  border-radius: 8px;
+  border: 1px solid #007aff;
+  background: transparent;
+  color: #007aff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.3s;
+}
+
+.language-switcher button.active-lang {
+  background: #007aff;
+  color: white;
+}
