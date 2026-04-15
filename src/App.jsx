@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from './firebase';
+import { auth } from './firebase'; // firebase.js App.jsx менен бир жерде болсо
 import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Компоненттерди импорттоо
-import AuthForm from './src/components/AuthForm';
-import Header from './src/components/Header';
-import Constitution from './src/components/Constitution';
+// Компоненттерди импорттоо (Баш тамга менен жазылышы шарт)
+import AuthForm from './components/AuthForm';
+import Header from './components/Header';
+import Constitution from './components/Constitution'; 
 
-// Стилдер
+// Стилдердин жолу (Relative paths)
 import './components/css/style.css';
 import './components/css/menu.css';
 import './components/css/tost.css';
@@ -42,7 +42,7 @@ function App() {
             <Header user={user} />
             <div className="content-area">
               <Routes>
-                {/* Башкы беттин мазмуну */}
+                {/* Башкы бет */}
                 <Route path="/" element={
                   <h1 style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>
                     Викторинага кош келиңиз!
@@ -52,7 +52,7 @@ function App() {
                 {/* Конституция барагы */}
                 <Route path="/constitution" element={<Constitution />} />
 
-                {/* Кийин башка беттерди (Тесттер, Этика) ушул жерге кошсоңуз болот */}
+                {/* Башка беттер */}
                 <Route path="/ethics" element={<div style={{color:'white', padding:'20px'}}>Этика кодекси жакында кошулат...</div>} />
                 <Route path="/service" element={<div style={{color:'white', padding:'20px'}}>Мамлекеттик кызмат мыйзамы жакында кошулат...</div>} />
               </Routes>
