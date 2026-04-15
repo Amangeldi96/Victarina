@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './css/constitution.css';
 
-const dataPart = [
+const dataPart1 = [
   {
     title: "РАЗДЕЛ ПЕРВЫЙ. ОСНОВЫ КОНСТИТУЦИОННОГО СТРОЯ",
     articles: [
@@ -151,56 +151,90 @@ const dataPart = [
 ];
 
 const Constitution = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedArticle, setSelectedArticle] = useState(articles[0]);
+  // 2. STATE (Абалдар)
+  const [searchTerm, setSearchTerm] = useState(''); // Издөө тексти
+  const [selectedArticle, setSelectedArticle] = useState(constitutionData[0].articles[0]); // Тандалган статья
+  const [openSection, setOpenSection] = useState(0); // Кайсы аккордеон ачык
 
-  const filteredArticles = articles.filter(art =>
-    art.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    art.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 3. ИЗДӨӨ ЛОГИКАСЫ
+  const filteredData = constitutionData.map(section => ({
+    ...section,
+    articles: section.articles.filter(art =>
+      art.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      art.content.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  })).filter(section => section.articles.length > 0);
 
   return (
     <div className="constitution-wrapper">
+      
+      {/* КАПТАЛ ТАРАП (SIDEBAR) */}
       <div className="article-sidebar">
+        
+        {/* Издөө талаасы */}
         <div className="search-box-container">
           <div className="search-wrapper">
-            <span className="search-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </span>
+            <span className="search-icon">🔍</span>
             <input
               className="search-input"
               type="text"
-              placeholder="Издөө..."
+              placeholder="Статья же текст издөө..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
+        {/* Аккордеон тизмеси */}
         <div className="article-list">
-          {filteredArticles.map((art) => (
-            <div
-              key={art.id}
-              className={`article-item ${selectedArticle.id === art.id ? 'active' : ''}`}
-              onClick={() => setSelectedArticle(art)}
-            >
-              <span className="article-section-label">{art.section}</span>
-              <h4 className="article-title-small">{art.title}</h4>
+          {filteredData.map((section, sIndex) => (
+            <div key={sIndex} className="accordion-group">
+              
+              {/* Разделдин аты (басканда ачылат) */}
+              <div 
+                className={`accordion-title ${openSection === sIndex ? 'active' : ''}`}
+                onClick={() => setOpenSection(openSection === sIndex ? null : sIndex)}
+              >
+                <span>{section.title}</span>
+                <span className="arrow">{openSection === sIndex ? '−' : '+'}</span>
+              </div>
+
+              {/* Разделдин ичиндеги статьялар */}
+              <div className={`accordion-content ${openSection === sIndex ? 'show' : ''}`}>
+                {section.articles.map((art) => (
+                  <div 
+                    key={art.id} 
+                    className={`sub-article-item ${selectedArticle?.id === art.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedArticle(art)}
+                  >
+                    {art.title}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
+      {/* ОҢ ТАРАП: ТЕКСТТИ КӨРСӨТҮҮ */}
       <div className="article-content">
-        {selectedArticle && (
+        {selectedArticle ? (
           <div className="content-fade">
-            <p className="active-section-name">{selectedArticle.section}</p>
+            <p className="active-section-name">Кыргыз Республикасынын Конституциясы</p>
             <h1 className="active-title-name">{selectedArticle.title}</h1>
             <div className="accent-line"></div>
-            <p className="content-text">{selectedArticle.content}</p>
+            <div className="content-text">
+              {selectedArticle.content}
+            </div>
+          </div>
+        ) : (
+          <div className="no-selection">
+            <h3>Маалымат табылган жок</h3>
+            <p>Башка издөө сөзүн жазып көрүңүз.</p>
           </div>
         )}
       </div>
+
     </div>
   );
 };
