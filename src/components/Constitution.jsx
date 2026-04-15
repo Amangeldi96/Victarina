@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './css/constitution.css';
 
-const dataPart1 = [
+const constitutionData = [
   {
     title: "РАЗДЕЛ ПЕРВЫЙ. ОСНОВЫ КОНСТИТУЦИОННОГО СТРОЯ",
     articles: [
@@ -151,13 +151,13 @@ const dataPart1 = [
 ];
 
 const Constitution = () => {
-  // 2. STATE (Абалдар)
-  const [searchTerm, setSearchTerm] = useState(''); // Издөө тексти
-  const [selectedArticle, setSelectedArticle] = useState(constitutionData[0].articles[0]); // Тандалган статья
-  const [openSection, setOpenSection] = useState(0); // Кайсы аккордеон ачык
+  const [searchTerm, setSearchTerm] = useState('');
+  // Биринчи статьяны дефолт катары тандайбыз
+  const [selectedArticle, setSelectedArticle] = useState(constitutionData[0].articles[0]);
+  const [openSection, setOpenSection] = useState(0);
 
-  // 3. ИЗДӨӨ ЛОГИКАСЫ
-  const filteredData = constitutionData.map(section => ({
+  // 2. ТУУРА ИЗДӨӨ ЛОГИКАСЫ
+  const filteredSections = constitutionData.map(section => ({
     ...section,
     articles: section.articles.filter(art =>
       art.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -167,30 +167,24 @@ const Constitution = () => {
 
   return (
     <div className="constitution-wrapper">
-      
-      {/* КАПТАЛ ТАРАП (SIDEBAR) */}
       <div className="article-sidebar">
-        
         {/* Издөө талаасы */}
         <div className="search-box-container">
           <div className="search-wrapper">
-            <span className="search-icon">🔍</span>
             <input
               className="search-input"
               type="text"
-              placeholder="Статья же текст издөө..."
+              placeholder="Издөө..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Аккордеон тизмеси */}
+        {/* Тизме */}
         <div className="article-list">
-          {filteredData.map((section, sIndex) => (
+          {filteredSections.map((section, sIndex) => (
             <div key={sIndex} className="accordion-group">
-              
-              {/* Разделдин аты (басканда ачылат) */}
               <div 
                 className={`accordion-title ${openSection === sIndex ? 'active' : ''}`}
                 onClick={() => setOpenSection(openSection === sIndex ? null : sIndex)}
@@ -198,8 +192,7 @@ const Constitution = () => {
                 <span>{section.title}</span>
                 <span className="arrow">{openSection === sIndex ? '−' : '+'}</span>
               </div>
-
-              {/* Разделдин ичиндеги статьялар */}
+              
               <div className={`accordion-content ${openSection === sIndex ? 'show' : ''}`}>
                 {section.articles.map((art) => (
                   <div 
@@ -216,25 +209,18 @@ const Constitution = () => {
         </div>
       </div>
 
-      {/* ОҢ ТАРАП: ТЕКСТТИ КӨРСӨТҮҮ */}
+      {/* Текст чыгуучу жер */}
       <div className="article-content">
         {selectedArticle ? (
-          <div className="content-fade">
-            <p className="active-section-name">Кыргыз Республикасынын Конституциясы</p>
+          <div className="content-card">
             <h1 className="active-title-name">{selectedArticle.title}</h1>
             <div className="accent-line"></div>
-            <div className="content-text">
-              {selectedArticle.content}
-            </div>
+            <p className="content-text">{selectedArticle.content}</p>
           </div>
         ) : (
-          <div className="no-selection">
-            <h3>Маалымат табылган жок</h3>
-            <p>Башка издөө сөзүн жазып көрүңүз.</p>
-          </div>
+          <p style={{color: 'black', padding: '20px'}}>Статья табылган жок...</p>
         )}
       </div>
-
     </div>
   );
 };
