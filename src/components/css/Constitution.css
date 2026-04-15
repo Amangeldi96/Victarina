@@ -1,0 +1,133 @@
+/* Жалпы контейнер */
+.constitution-wrapper {
+  display: flex;
+  height: 85vh;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 15px;
+  overflow: hidden;
+}
+
+/* Скроллдун сызыгын жашыруу (Chrome, Safari, Edge) */
+.article-list::-webkit-scrollbar,
+.article-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Скроллду жашыруу (Firefox жана IE) */
+.article-list, .article-content {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* SIDEBAR (Компьютерде капталда) */
+.article-sidebar {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.search-box-container {
+  padding: 12px;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 10px 10px 35px;
+  color: white;
+  outline: none;
+}
+
+.article-list {
+  overflow-y: auto;
+  padding: 10px;
+  flex: 1;
+}
+
+.article-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.03);
+  transition: 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.article-item.active {
+  background: #007aff;
+  border-color: #007aff;
+}
+
+/* MAIN CONTENT */
+.article-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+}
+
+.content-text {
+  font-size: 18px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ТЕЛЕФОНДОГУ ВЕРСИЯ (Media Queries) */
+@media (max-width: 768px) {
+  .constitution-wrapper {
+    flex-direction: column;
+    height: 90vh;
+    margin: 10px;
+    padding: 10px;
+  }
+
+  .article-sidebar {
+    width: 100%;
+    height: auto;
+    background: transparent;
+    border: none;
+  }
+
+  /* Телефондо тизме горизонталдык скролл болот (Чиптер сыяктуу) */
+  .article-list {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 5px 0;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .article-item {
+    display: inline-block;
+    min-width: 120px;
+    margin-bottom: 0;
+    padding: 8px 15px;
+    text-align: center;
+  }
+
+  .article-item span {
+    display: none; /* Мобилдикте бөлүмдүн атын жашырып туруу */
+  }
+
+  .article-content {
+    padding: 20px;
+  }
+  
+  .content-title {
+    font-size: 24px;
+  }
+}

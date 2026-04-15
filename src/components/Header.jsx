@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
+import { Link } from 'react-router-dom';
 
 const Header = ({ user }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,7 +10,6 @@ const Header = ({ user }) => {
 
   const userName = user?.displayName || user?.email?.split('@')[0] || "Колдонуучу";
 
-  // Сыртты басканда жабылуу логикасы
   useEffect(() => {
     const handleClickOutside = () => {
       setProfileOpen(false);
@@ -24,7 +24,6 @@ const Header = ({ user }) => {
     if (window.confirm("Чыгасызбы?")) signOut(auth);
   };
 
-  // Иконкалар топтому (кайталанбаш үчүн)
   const Icons = {
     Home: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
     Law: () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 7V3M7 8v10M17 8v10M3 18h18M10 21h4"/></svg>,
@@ -39,21 +38,28 @@ const Header = ({ user }) => {
       <header className="main-header" onClick={(e) => e.stopPropagation()}>
         <div className="header-container">
           <div className="header-left">
-            <div className="header-logo">Тестке Даярдык</div>
+            <Link to="/" className="header-logo" style={{ textDecoration: 'none', color: 'inherit' }}>
+              Тестке Даярдык
+            </Link>
           </div>
 
           <nav className="desktop-nav">
             <ul className="nav-list">
-              <li className="nav-item">Башкы</li>
+              <li className="nav-item">
+                <Link to="/" className="nav-link" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  Башкы
+                </Link>
+              </li>
               <li 
                 className="nav-item" 
                 onMouseEnter={() => setDropdown('law')} 
                 onMouseLeave={() => setDropdown(null)}
               >
-                Мыйзамдар <span className="chevron">▾</span>
+                <span className="nav-link">Мыйзамдар <span className="chevron">▾</span></span>
                 <div className={`dropdown-panel ${dropdown === 'law' ? 'show' : ''}`}>
-                  <a href="#">Конституция</a>
-                  <a href="#">Кызмат мыйзамы</a>
+                  <Link to="/constitution">Конституция</Link>
+                  <Link to="/ethics">Этика кодекси</Link>
+                  <Link to="/service">Мамлекеттик кызмат</Link>
                 </div>
               </li>
               <li 
@@ -61,10 +67,10 @@ const Header = ({ user }) => {
                 onMouseEnter={() => setDropdown('test')} 
                 onMouseLeave={() => setDropdown(null)}
               >
-                Тесттер <span className="chevron">▾</span>
+                <span className="nav-link">Тесттер <span className="chevron">▾</span></span>
                 <div className={`dropdown-panel ${dropdown === 'test' ? 'show' : ''}`}>
-                  <a href="#">Жалпы тест</a>
-                  <a href="#">Логика</a>
+                  <Link to="/general-test">Жалпы тест</Link>
+                  <Link to="/logic">Логика</Link>
                 </div>
               </li>
             </ul>
@@ -84,18 +90,15 @@ const Header = ({ user }) => {
                     <span>{user?.email}</span>
                   </div>
                   <hr />
-                  <button className="p-modal-item">
-                    <Icons.History />
-                    Менин тарыхым
-                  </button>
-                  <button className="p-modal-item">
-                    <Icons.Settings />
-                    Настройка
-                  </button>
+                  <Link to="/history" className="p-modal-item">
+                    <Icons.History /> Менин тарыхым
+                  </Link>
+                  <Link to="/settings" className="p-modal-item">
+                    <Icons.Settings /> Настройка
+                  </Link>
                   <hr />
                   <button className="p-modal-item logout" onClick={handleLogout}>
-                    <Icons.Logout />
-                    Чыгуу
+                    <Icons.Logout /> Чыгуу
                   </button>
                 </div>
               )}
@@ -108,7 +111,7 @@ const Header = ({ user }) => {
         </div>
       </header>
 
-      {/* МОБИЛДИК DRAWER */}
+      {/* Мобилдик сидебар ошол бойдон калат */}
       <div className={`mobile-sidebar ${mobileMenuOpen ? 'active' : ''}`}>
         <div className="sidebar-header">
           <div className="user-info-card">
@@ -120,36 +123,33 @@ const Header = ({ user }) => {
           </div>
           <button className="close-sidebar" onClick={() => setMobileMenuOpen(false)}>✕</button>
         </div>
-
         <div className="sidebar-body">
           <div className="sidebar-section">
             <label>Меню</label>
-            <button className="sidebar-link">
+            <Link to="/" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
               <Icons.Home /> Башкы бет
-            </button>
-            <button className="sidebar-link">
-              <Icons.Law /> Мыйзамдар
-            </button>
-            <button className="sidebar-link">
+            </Link>
+            <Link to="/constitution" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
+              <Icons.Law /> Конституция
+            </Link>
+            <Link to="/general-test" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
               <Icons.Test /> Тесттер
-            </button>
+            </Link>
           </div>
-
           <div className="sidebar-section">
             <label>Профиль</label>
-            <button className="sidebar-link">
+            <Link to="/history" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
               <Icons.History /> Менин тарыхым
-            </button>
-            <button className="sidebar-link">
+            </Link>
+            <Link to="/settings" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
               <Icons.Settings /> Настройка
-            </button>
+            </Link>
             <button className="sidebar-link logout-btn" onClick={handleLogout}>
               <Icons.Logout /> Чыгуу
             </button>
           </div>
         </div>
       </div>
-
       {mobileMenuOpen && <div className="sidebar-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
     </>
   );
