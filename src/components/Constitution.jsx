@@ -24,17 +24,16 @@ const Constitution = () => {
 
   return (
     <div className="constitution-wrapper">
-      
       <div className="article-sidebar">
         <div className="search-box-container">
-          <div className="search-wrapper" style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <div className="search-wrapper">
+            <span className="search-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </span>
             <input
               className="search-input"
               type="text"
-              placeholder="Статья номери..."
+              placeholder="Издөө..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -48,8 +47,8 @@ const Constitution = () => {
               className={`article-item ${selectedArticle.id === art.id ? 'active' : ''}`}
               onClick={() => setSelectedArticle(art)}
             >
-              <span style={{ display: 'block', fontSize: '10px', opacity: 0.6 }}>{art.section}</span>
-              <h4 style={{ margin: 0 }}>{art.title}</h4>
+              <span className="article-section-label">{art.section}</span>
+              <h4 className="article-title-small">{art.title}</h4>
             </div>
           ))}
         </div>
@@ -57,15 +56,14 @@ const Constitution = () => {
 
       <div className="article-content">
         {selectedArticle && (
-          <div key={selectedArticle.id}>
-            <p style={{ color: '#007aff', fontSize: '14px', fontWeight: 'bold' }}>{selectedArticle.section}</p>
-            <h1 className="content-title" style={{ color: 'white', margin: '10px 0' }}>{selectedArticle.title}</h1>
-            <div style={{ width: '50px', height: '3px', background: '#007aff', marginBottom: '20px' }}></div>
+          <div className="content-fade">
+            <p className="active-section-name">{selectedArticle.section}</p>
+            <h1 className="active-title-name">{selectedArticle.title}</h1>
+            <div className="accent-line"></div>
             <p className="content-text">{selectedArticle.content}</p>
           </div>
         )}
       </div>
-
     </div>
   );
 };
