@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from './firebase'; // firebase.js App.jsx менен бир жерде болсо
+import { auth } from './firebase'; 
 import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Компоненттерди импорттоо (Баш тамга менен жазылышы шарт)
 import AuthForm from './components/AuthForm';
 import Header from './components/Header';
 import Constitution from './components/constitution'; 
+import Home from './components/home';
 
-// Стилдердин жолу (Relative paths)
+import { constitutionData } from './data'; 
+
 import './components/css/style.css';
 import './components/css/menu.css';
 import './components/css/tost.css';
@@ -26,13 +27,7 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="loader-container">
-        <div className="loader">Жүктөлүүдө...</div>
-      </div>
-    );
-  }
+  if (loading) return <div className="loader">Жүктөлүүдө...</div>;
 
   return (
     <Router>
@@ -42,19 +37,9 @@ function App() {
             <Header user={user} />
             <div className="content-area">
               <Routes>
-                {/* Башкы бет */}
-                <Route path="/" element={
-                  <h1 style={{ color: 'white', textAlign: 'center', marginTop: '100px' }}>
-                    Викторинага кош келиңиз!
-                  </h1>
-                } />
-
-                {/* Конституция барагы */}
-                <Route path="/constitution" element={<Constitution />} />
-
-                {/* Башка беттер */}
-                <Route path="/ethics" element={<div style={{color:'white', padding:'20px'}}>Этика кодекси жакында кошулат...</div>} />
-                <Route path="/service" element={<div style={{color:'white', padding:'20px'}}>Мамлекеттик кызмат мыйзамы жакында кошулат...</div>} />
+                <Route path="/" element={<Home constitutionData={constitutionData} />} />
+                <Route path="/constitution" element={<Constitution data={constitutionData} />} />
+                <Route path="/ethics" element={<div style={{color:'white', padding:'20px'}}>Этика кодекси жакында...</div>} />
               </Routes>
             </div>
           </>

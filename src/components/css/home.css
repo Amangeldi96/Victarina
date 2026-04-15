@@ -1,0 +1,175 @@
+/* 1. Кыргыз тамгаларын колдогон шрифтти жүктөө */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px; /* Телефондо четтеринен боштук болушу үчүн */
+  font-family: 'Montserrat', sans-serif; /* Негизги шрифт */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Саламдашуу блогу */
+.hero-banner {
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #007aff 0%, #00c6ff 100%);
+  border-radius: 24px;
+  color: white;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0, 122, 255, 0.3);
+}
+
+.hero-banner h1 {
+  font-size: 2.5rem; /* Телефонго ылайыкташтырылган өлчөм */
+  margin-bottom: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.hero-banner p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Карталардын сеткасы */
+.main-grid {
+  display: grid;
+  /* Телефондо 1 колонка, компьютерде автоматтык түрдө көбөйөт */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 20px;
+}
+
+/* Жеке картанын стили */
+.feature-card {
+  background: white;
+  padding: 30px 20px;
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid #eef2f6;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border-color: #007aff;
+}
+
+.icon-box {
+  width: 70px;
+  height: 70px;
+  background: #f0f7ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+.feature-card h3 {
+  font-size: 1.4rem;
+  color: #1d1d1f;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: #6e6e73;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+}
+
+.go-btn {
+  width: 100%; /* Телефондо басууга оңой болушу үчүн кеңейтилди */
+  max-width: 200px;
+  padding: 12px;
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ТЕЛЕФОНДОР ҮЧҮН АТАЙЫН ЖӨНДӨӨ (Responsive) */
+@media (max-width: 768px) {
+  .hero-banner {
+    padding: 40px 15px;
+    margin-bottom: 30px;
+  }
+
+  .hero-banner h1 {
+    font-size: 1.8rem; /* Телефондо текст бир аз кичирейет */
+  }
+
+  .hero-banner p {
+    font-size: 1rem;
+  }
+
+  .main-grid {
+    gap: 15px; /* Карталардын ортосундагы аралык азаят */
+  }
+
+  .feature-card {
+    padding: 25px 15px;
+  }
+}
+
+/* Күндүн беренеси блогу */
+.daily-article-card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+  border-left: 6px solid #007aff;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.daily-article-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.daily-tag {
+  display: inline-block;
+  background: #eef6ff;
+  color: #007aff;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.daily-article-card h3 {
+  margin-bottom: 10px;
+  color: #1d1d1f;
+}
+
+.daily-article-card p {
+  color: #6e6e73;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.daily-article-card span {
+  display: block;
+  margin-top: 15px;
+  color: #007aff;
+  font-weight: 600;
+}
