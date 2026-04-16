@@ -1,63 +1,139 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from './firebase'; 
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+// Компоненттер
 import AuthForm from './components/AuthForm';
 import Header from './components/Header';
-import Constitution from './components/constitution'; 
 import Home from './components/home';
-import Ethics from './components/ethics'; 
+import Constitution from './components/constitution';
+import Ethics from './components/ethics';
+import CivilService from './components/civilService';
 
-// МААЛЫМАТТАР - Бул жердеги аттарды СӨЗСҮЗ текшер!
-import { constitutionData } from './data/constitutionData'; 
-// Сүрөттө 'ethicsCodeData' деп жазылган, ошол атты колдонобуз
-import { ethicsCodeData } from './data/ethicsData'; 
+// Тест компоненттери (файл аталыштарына так дал келди)
+import Test from './components/test';
+import LogicTest from './components/logicTest';
 
+// Маалыматтар
+import { constitutionData } from './data/constitutionData';
+import { ethicsCodeData } from './data/ethicsData';
+import { civilServiceData } from './data/civilServiceData';
+import { generalTestData } from './data/generalTestData';
+import { logicTestData } from './data/logicTestData';
+
+// Стилдер
 import './components/css/style.css';
 import './components/css/menu.css';
-import './components/css/tost.css';
+import './components/css/test.css';
 import './components/css/constitution.css';
+
+// 🔒 Корголгон маршрут компоненти
+const ProtectedRoute = ({ user, children }) => {
+  return user ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Firebase авторизациясын текшерүү
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
-  if (loading) return <div className="loader">Жүктөлүүдө...</div>;
+  // Жүктөлүү учурунда көрсөтүлүүчү экран
+  if (loading) {
+    return <div className="loader">Жүктөлүүдө...</div>;
+  }
 
   return (
     <Router>
       <div className="main-wrapper">
-        {user ? (
-          <>
-            <Header user={user} />
-            <div className="content-area">
-              <Routes>
-                {/* 1. Башкы бет */}
-                <Route path="/" element={<Home constitutionData={constitutionData || []} />} />
-                
-                {/* 2. Конституция */}
-                <Route path="/constitution" element={<Constitution data={constitutionData || []} />} />
-                
-                {/* 3. Этика (ethicsCodeData өзгөрмөсүн жиберебиз) */}
-                <Route path="/ethics" element={<Ethics data={ethicsCodeData || []} />} />
-                
-                {/* 4. Мамлекеттик кызмат */}
-                <Route path="/service" element={<div style={{color:'white', padding:'20px'}}>Жакында...</div>} />
-              </Routes>
-            </div>
-          </>
-        ) : (
-          <AuthForm />
-        )}
+        {user && <Header user={user} />}
+
+        <div className="content-area">
+          <Routes>
+            {/* Авторизация */}
+            <Route
+              path="/login"
+              element={!user ? <AuthForm /> : <Navigate to="/" replace />}
+            />
+
+            {/* Негизги барактар */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute user={user}>
+                  <Home constitutionData={constitutionData || []} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/constitution"
+              element={
+                <ProtectedRoute user={user}>
+                  <Constitution data={constitutionData || []} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/ethics"
+              element={
+                <ProtectedRoute user={user}>
+                  <Ethics data={ethicsCodeData || []} />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/service"
+              element={
+                <ProtectedRoute user={user}>
+                  <CivilService data={civilServiceData || []} />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 📝 Жалпы тест */}
+            <Route
+              path="/quiz/general"
+              element={
+                <ProtectedRoute user={user}>
+                  <Test
+                    data={generalTestData || []}
+                    title="Жалпы тест"
+                  />
+                </ProtectedRoute>
+              }
+            />
+
+        {/* 🧠 Логикалык тест */}
+<Route
+  path="/quiz/logic"
+  element={
+    <ProtectedRoute user={user}>
+      <LogicTest
+        // Маалыматтардын бош эмес экенин текшеребиз
+        data={logicTestData && logicTestData.length > 0 ? logicTestData : []} 
+        titleKy="Логикалык тест"
+        titleRu="Логика и мышление"
+      />
+    </ProtectedRoute>
+  }
+/>
+
+            {/* Белгисиз маршруттар үчүн */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );

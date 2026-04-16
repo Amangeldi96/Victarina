@@ -67,10 +67,12 @@ const Header = ({ user }) => {
                 onMouseEnter={() => setDropdown('test')} 
                 onMouseLeave={() => setDropdown(null)}
               >
-                <span className="nav-link">Тесттер <span className="chevron">▾</span></span>
-                <div className={`dropdown-panel ${dropdown === 'test' ? 'show' : ''}`}>
-                  <Link to="/general-test">Жалпы тест</Link>
-                  <Link to="/logic">Логика</Link>
+             <span className="nav-link">
+  Тесттер <span className="chevron">▾</span>
+</span>
+<div className={`dropdown-panel ${dropdown === 'test' ? 'show' : ''}`}>
+  <Link to="/quiz/general">Жалпы тест</Link>
+  <Link to="/quiz/logic">Логика</Link>
                 </div>
               </li>
             </ul>
