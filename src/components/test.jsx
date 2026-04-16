@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { db, auth } from '../firebase'; // Firebase импорттору
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const Test = ({ data = [], titleKy, titleRu }) => {
   const [lang, setLang] = useState('ky');
@@ -7,8 +9,9 @@ const Test = ({ data = [], titleKy, titleRu }) => {
   const [userAnswers, setUserAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [showResult, setShowResult] = useState(false);
+  const [isSaving, setIsSaving] = useState(false); // Сактоо индикатору
 
-  // Маалыматты форматтоо жана аралаштыруу
+  // 1. Маалыматты форматтоо жана аралаштыруу
   const quizData = useMemo(() => {
     if (!data || data.length === 0) return [];
     const formatted = data.map(item => {
@@ -30,12 +33,61 @@ const Test = ({ data = [], titleKy, titleRu }) => {
     return [...formatted].sort(() => 0.5 - Math.random()).slice(0, 30);
   }, [data]);
 
+  // 2. Статистиканы эсептөө жана Firebase'ге сактоо
+  const calculateStats = () => {
+    let correct = 0, wrong = 0, unanswered = 0;
+    quizData.forEach((q, idx) => {
+      const ans = userAnswers[idx];
+      if (!ans || ans.length === 0) { unanswered++; } 
+      else {
+        const isCorrect = ans.length === q.correctIndices.length && ans.every(v => q.correctIndices.includes(v));
+        isCorrect ? correct++ : wrong++;
+      }
+    });
+
+    // Канча убакыт коротулганын эсептөө
+    const timeSpentSeconds = (30 * 60) - timeLeft;
+    const mins = Math.floor(timeSpentSeconds / 60);
+    const secs = timeSpentSeconds % 60;
+    const timeTaken = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+    return { correct, wrong, unanswered, timeTaken, percentage: Math.round((correct / quizData.length) * 100) };
+  };
+
+  const saveToFirebase = async (stats) => {
+    const user = auth.currentUser;
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      await addDoc(collection(db, "test_history"), {
+        userId: user.uid,
+        testTitle: titleKy,
+        correct: stats.correct,
+        wrong: stats.wrong + stats.unanswered, // Жоопсуз калгандар да катага кирет
+        timeTaken: stats.timeTaken,
+        percentage: stats.percentage,
+        createdAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.error("Firebase save error:", e);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleFinish = () => {
+    const stats = calculateStats();
+    setShowResult(true);
+    saveToFirebase(stats);
+  };
+
+  // 3. Таймер эффекти
   useEffect(() => {
     let timer;
     if (isStarted && timeLeft > 0 && !showResult) {
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-    } else if (timeLeft === 0) {
-      setShowResult(true);
+    } else if (timeLeft === 0 && !showResult) {
+      handleFinish();
     }
     return () => clearInterval(timer);
   }, [isStarted, timeLeft, showResult]);
@@ -51,13 +103,15 @@ const Test = ({ data = [], titleKy, titleRu }) => {
       start: "Тестти баштоо", next: "Кийинки", prev: "Артка", finish: "Жыйынтыктоо", 
       time: "Убакыт", correct: "Туура", wrong: "Ката", noAns: "Жоопсуз", 
       review: "Каталар менен иштөө", trueAns: "Туура жооп:",
-      testOver: "Тест аяктады!", restart: "Кайра баштоо", loading: "Жүктөлүүдө..."
+      testOver: "Тест аяктады!", restart: "Кайра баштоо", loading: "Жүктөлүүдө...",
+      timeLabel: "Коротулган убакыт:"
     },
     ru: { 
       start: "Начать тест", next: "Далее", prev: "Назад", finish: "Завершить", 
       time: "Время", correct: "Правильно", wrong: "Неправильно", noAns: "Без ответа", 
       review: "Работа над ошибками", trueAns: "Правильный ответ:",
-      testOver: "Тест завершен!", restart: "Начать заново", loading: "Загрузка..."
+      testOver: "Тест завершен!", restart: "Начать заново", loading: "Загрузка...",
+      timeLabel: "Затраченное время:"
     }
   }[lang];
 
@@ -74,28 +128,12 @@ const Test = ({ data = [], titleKy, titleRu }) => {
     setUserAnswers({ ...userAnswers, [currentQuestion]: currentSelected });
   };
 
-  const calculateStats = () => {
-    let correct = 0, wrong = 0, unanswered = 0;
-    quizData.forEach((q, idx) => {
-      const ans = userAnswers[idx];
-      if (!ans || ans.length === 0) { unanswered++; } 
-      else {
-        const isCorrect = ans.length === q.correctIndices.length && ans.every(v => q.correctIndices.includes(v));
-        isCorrect ? correct++ : wrong++;
-      }
-    });
-    return { correct, wrong, unanswered };
-  };
-
-  // Тил которгуч компоненти (SVG менен)
   const LangSwitcher = () => (
-    <div className="lang-switcher-container">
-      <button className={`lang-btn ${lang === 'ky' ? 'active' : ''}`} onClick={() => setLang('ky')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    <div className="lang-switcher-container" style={{ display: 'flex', gap: '10px' }}>
+      <button className={`lang-btn ${lang === 'ky' ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setLang('ky'); }}>
         KG
       </button>
-      <button className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} onClick={() => setLang('ru')}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <button className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setLang('ru'); }}>
         RU
       </button>
     </div>
@@ -119,18 +157,18 @@ const Test = ({ data = [], titleKy, titleRu }) => {
 
   // 2. ЖЫЙЫНТЫК ЭКРАНЫ
   if (showResult) {
-    const { correct, wrong, unanswered } = calculateStats();
+    const stats = calculateStats();
     return (
       <div className="quiz-main-container">
         <div className="quiz-card result-box review-mode">
           <h1 className="active-title-name">{t.testOver}</h1>
           <div className="stat-grid">
-            <div className="stat-item correct">{t.correct}: {correct}</div>
-            <div className="stat-item wrong">{t.wrong}: {wrong}</div>
-            <div className="stat-item empty">{t.noAns}: {unanswered}</div>
+            <div className="stat-item correct">{t.correct}: {stats.correct}</div>
+            <div className="stat-item wrong">{t.wrong}: {stats.wrong}</div>
+            <div className="stat-item time" style={{color: '#3b82f6'}}>{t.time}: {stats.timeTaken}</div>
           </div>
           <div className="score-summary">
-            <p className="score-text">Жыйынтык: <span>{correct} / {quizData.length}</span></p>
+            <p className="score-text">{lang === 'ky' ? 'Пайыз' : 'Процент'}: <span>{stats.percentage}%</span></p>
           </div>
           <div className="review-list">
             <h3 className="review-title">{t.review}</h3>
@@ -141,7 +179,6 @@ const Test = ({ data = [], titleKy, titleRu }) => {
               return (
                 <div key={idx} className="review-item">
                   <p className="review-question">{idx + 1}. {lang === 'ky' ? q.question_ky : q.question_ru}</p>
-                  <p className="your-ans">{t.wrong}: {ans.map(i => (lang === 'ky' ? q.options_ky[i] : q.options_ru[i])).join(', ') || t.noAns}</p>
                   <p className="correct-ans">{t.trueAns} {q.correctIndices.map(i => (lang === 'ky' ? q.options_ky[i] : q.options_ru[i])).join(', ')}</p>
                 </div>
               );
@@ -164,8 +201,7 @@ const Test = ({ data = [], titleKy, titleRu }) => {
           <div className="quiz-header-left" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
             <span className="quiz-category-tag">{lang === 'ky' ? titleKy : titleRu}</span>
             <div className="timer-badge">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span className="timer">{formatTime(timeLeft)}</span>
+                <span className="timer">⏱ {formatTime(timeLeft)}</span>
             </div>
           </div>
           <LangSwitcher />
@@ -189,15 +225,15 @@ const Test = ({ data = [], titleKy, titleRu }) => {
           ))}
         </div>
 
-        <div className="nav-btns">
-          <button className="next-btn prev-btn" disabled={currentQuestion === 0} onClick={() => setCurrentQuestion(prev => prev - 1)} style={{marginTop: 0, width: '48%', background: '#f1f3f5', color: '#4a4a4a'}}>
+        <div className="nav-btns" style={{display: 'flex', justifyContent: 'space-between', marginTop: '30px'}}>
+          <button className="next-btn prev-btn" disabled={currentQuestion === 0} onClick={() => setCurrentQuestion(prev => prev - 1)} style={{margin: 0, width: '48%', background: '#f1f3f5', color: '#4a4a4a'}}>
             {t.prev}
           </button>
           <button 
             className={`next-btn ${(!userAnswers[currentQuestion] || userAnswers[currentQuestion].length === 0) ? 'disabled' : 'active'}`}
-            style={{marginTop: 0, width: '48%'}}
+            style={{margin: 0, width: '48%'}}
             disabled={!userAnswers[currentQuestion] || userAnswers[currentQuestion].length === 0}
-            onClick={() => currentQuestion === quizData.length - 1 ? setShowResult(true) : setCurrentQuestion(prev => prev + 1)}
+            onClick={() => currentQuestion === quizData.length - 1 ? handleFinish() : setCurrentQuestion(prev => prev + 1)}
           >
             {currentQuestion === quizData.length - 1 ? t.finish : t.next}
           </button>

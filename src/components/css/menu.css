@@ -21,11 +21,27 @@
   align-items: center;
 }
 
-.header-logo { font-size: 1.4rem; font-weight: 800; }
+.header-logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  transition: 0.2s;
+}
+.header-logo:hover {
+  opacity: 0.85;
+}
 
 /* --- ПК Навигация --- */
-.desktop-nav { display: flex; }
-.nav-list { display: flex; list-style: none; gap: 5px; margin: 0; padding: 0; }
+.desktop-nav {
+  display: flex;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+}
 
 .nav-item {
   position: relative;
@@ -33,12 +49,27 @@
   cursor: pointer;
   font-weight: 500;
   font-size: 0.95rem;
-  transition: 0.3s;
+  transition: 0.25s;
+  border-radius: 8px;
 }
 
-.chevron { font-size: 0.8rem; margin-left: 4px; opacity: 0.8; }
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
 
-/* Dropdown ПК үчүн (Кармошка маселеси оңдолгон) */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chevron {
+  font-size: 0.8rem;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* --- Dropdown ПК --- */
 .dropdown-panel {
   position: absolute;
   top: 100%;
@@ -50,10 +81,12 @@
   padding: 10px;
   display: flex;
   flex-direction: column;
+
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
-  transition: 0.2s ease;
+  transition: 0.25s ease;
+  z-index: 999;
 }
 
 .nav-item:hover .dropdown-panel {
@@ -69,10 +102,16 @@
   border-radius: 8px;
   transition: 0.2s;
 }
-.dropdown-panel a:hover { background: #f0f7ff; color: #007bff; }
 
-/* --- ПК Профиль Модалкасы --- */
-.pc-profile-wrapper { position: relative; }
+.dropdown-panel a:hover {
+  background: #f0f7ff;
+  color: #007bff;
+}
+
+/* --- ПК Профиль --- */
+.pc-profile-wrapper {
+  position: relative;
+}
 
 .user-pill {
   background: rgba(255, 255, 255, 0.15);
@@ -86,11 +125,20 @@
   cursor: pointer;
   transition: 0.2s;
 }
-.user-pill:hover { background: rgba(255, 255, 255, 0.25); }
+
+.user-pill:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
 
 .user-avatar {
-  width: 34px; height: 34px; background: #6f42c1; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-weight: bold;
+  width: 34px;
+  height: 34px;
+  background: #6f42c1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 }
 
 .profile-dropdown-modal {
@@ -105,56 +153,195 @@
   color: #1e293b;
   z-index: 1100;
   border: 1px solid #f1f5f9;
+  animation: fadeIn 0.2s ease;
 }
 
-.p-modal-header { padding: 10px 15px; display: flex; flex-direction: column; }
-.p-modal-header strong { font-size: 1rem; color: #0f172a; }
-.p-modal-header span { font-size: 0.8rem; color: #64748b; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .p-modal-item {
-  width: 100%; background: none; border: none; padding: 12px 15px;
-  display: flex; align-items: center; gap: 12px; border-radius: 10px;
-  cursor: pointer; font-weight: 500; color: #475569; transition: 0.2s;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #475569;
+  transition: 0.2s;
 }
-.p-modal-item:hover { background: #f1f5f9; color: #007bff; }
-.p-modal-item.logout { color: #ef4444; }
-.p-modal-item.logout:hover { background: #fef2f2; }
 
-/* --- Мобилдик Меню (Sidebar) --- */
-.mobile-burger-btn { display: none; background: none; border: none; cursor: pointer; }
+.p-modal-item:hover {
+  background: #f1f5f9;
+  color: #007bff;
+}
 
+.p-modal-item.logout {
+  color: #ef4444;
+}
+
+/* =========================
+   MOBILE FIX (FULL IMPROVE)
+========================= */
+.mobile-burger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.6rem;
+  color: white;
+}
+
+/* SIDEBAR */
 .mobile-sidebar {
-  position: fixed; top: 0; right: 0; width: 80%; max-width: 320px;
-  height: 100vh; background: #0f172a; z-index: 2000;
-  transform: translateX(100%); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex; flex-direction: column;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 85%;
+  max-width: 340px;
+  height: 100vh;
+  background: #0f172a;
+  z-index: 2000;
+  transform: translateX(100%);
+  transition: 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
 }
-.mobile-sidebar.active { transform: translateX(0); }
 
+.mobile-sidebar.active {
+  transform: translateX(0);
+}
+
+/* HEADER */
 .sidebar-header {
-  padding: 30px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.user-avatar-lg { width: 55px; height: 55px; background: #6f42c1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; margin-bottom: 12px; color: white; }
-.user-text h4 { color: white; margin: 0; font-size: 1.1rem; }
-.user-text p { color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0; }
 
-.close-sidebar { background: rgba(255,255,255,0.05); border: none; color: white; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
+.user-avatar-lg {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #6f42c1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: white;
+}
 
-.sidebar-body { padding: 25px 15px; overflow-y: auto; }
-.sidebar-section { display: flex; flex-direction: column; gap: 8px; margin-bottom: 30px; }
-.sidebar-section label { color: #475569; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; margin-left: 10px; letter-spacing: 1px; }
+.user-text h4 {
+  color: white;
+  margin: 6px 0 0;
+  font-size: 1rem;
+}
+
+.user-text p {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* BODY */
+.sidebar-body {
+  padding: 14px;
+  overflow-y: auto;
+}
 
 .sidebar-link {
-  background: rgba(255, 255, 255, 0.03); border: none; padding: 16px; border-radius: 12px;
-  color: #cbd5e1; text-align: left; font-size: 1rem; cursor: pointer; transition: 0.2s;
+  width: 100%;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: none;
+  color: #cbd5e1;
+  text-align: left;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.2s;
 }
-.sidebar-link.logout-btn { color: #f87171; background: rgba(248, 113, 113, 0.05); }
 
-.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1500; }
+.sidebar-link:active {
+  transform: scale(0.98);
+}
 
-/* --- Медиа Запрос --- */
+.sidebar-link:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+/* submenu */
+.mobile-collapsible .mobile-sub-links {
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.25s ease;
+  padding-left: 8px;
+}
+
+.mobile-collapsible.open .mobile-sub-links {
+  max-height: 260px;
+  margin-top: 8px;
+}
+
+.mobile-sub-links a {
+  display: block;
+  padding: 10px 12px;
+  color: #94a3b8;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.mobile-sub-links a:active {
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+/* OVERLAY */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1500;
+}
+
+/* =========================
+   RESPONSIVE IMPROVED
+========================= */
 @media (max-width: 850px) {
-  .desktop-nav, .pc-profile-wrapper { display: none !important; }
-  .mobile-burger-btn { display: block; }
+  .desktop-nav,
+  .pc-profile-wrapper {
+    display: none !important;
+  }
+
+  .mobile-burger-btn {
+    display: block;
+  }
+
+  .header-container {
+    padding: 0 14px;
+  }
+}
+
+/* SMALL PHONES */
+@media (max-width: 420px) {
+  .mobile-sidebar {
+    width: 92%;
+  }
+
+  .header-logo {
+    font-size: 1.1rem;
+  }
+
+  .sidebar-link {
+    font-size: 0.9rem;
+    padding: 14px;
+  }
 }
