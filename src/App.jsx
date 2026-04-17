@@ -47,10 +47,38 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // Жүктөлүү учурунда көрсөтүлүүчү экран
-  if (loading) {
-    return <div className="loader">Жүктөлүүдө...</div>;
-  }
+if (loading) {
+  return (
+    <div className="home-container skeleton-wrapper">
+      {/* Баннердин скелети */}
+      <div className="hero-banner skeleton-banner">
+        <div className="sk-title"></div>
+        <div className="sk-subtitle"></div>
+      </div>
+
+      {/* Күндүн беренесинин скелети */}
+      <div className="daily-article-card sk-daily-card">
+        <div className="sk-tag"></div>
+        <div className="sk-line large"></div>
+        <div className="sk-line full"></div>
+        <div className="sk-line full"></div>
+        <div className="sk-line medium"></div>
+      </div>
+
+      {/* Үч карточканын (Grid) скелети */}
+      <div className="main-grid">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="feature-card sk-card">
+            <div className="sk-icon"></div>
+            <div className="sk-line small center"></div>
+            <div className="sk-line full"></div>
+            <div className="sk-btn"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
   return (
     <Router>

@@ -173,3 +173,71 @@
   color: #007aff;
   font-weight: 600;
 }
+
+
+
+
+
+
+
+/* загрузка үчүн скелетон стили */
+/* Жалпы анимация - Сыйкыр ушул жерде */
+.skeleton-wrapper .sk-title,
+.skeleton-wrapper .sk-subtitle,
+.skeleton-wrapper .sk-tag,
+.skeleton-wrapper .sk-line,
+.skeleton-wrapper .sk-icon,
+.skeleton-wrapper .sk-btn {
+  background: #e0e0e0;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Баннер скелети */
+.skeleton-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #f9f9f9 !important; /* Баннердин фонун бир аз ачык кылабыз */
+}
+.sk-title { width: 60%; height: 40px; }
+.sk-subtitle { width: 80%; height: 20px; }
+
+/* Күндүн беренеси скелети */
+.sk-daily-card { 
+  background: white; 
+  border: 1px solid #eee; 
+  pointer-events: none;
+}
+.sk-tag { width: 120px; height: 24px; margin-bottom: 20px; }
+.sk-line { height: 16px; margin-bottom: 12px; }
+.sk-line.full { width: 100%; }
+.sk-line.large { width: 70%; height: 25px; margin-bottom: 20px; }
+.sk-line.medium { width: 50%; }
+.sk-line.small { width: 40%; height: 20px; }
+.sk-line.center { margin: 0 auto 15px auto; }
+
+/* Төмөнкү карточкалар (Grid) */
+.sk-card {
+  text-align: center;
+  background: white;
+  pointer-events: none;
+}
+.sk-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50% !important;
+  margin: 0 auto 15px auto;
+}
+.sk-btn {
+  width: 80%;
+  height: 35px;
+  margin: 15px auto 0 auto;
+}
