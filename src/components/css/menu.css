@@ -379,6 +379,25 @@
   color: white;
 }
 
+  .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f1f5f9; /* Бир аз бозомук фон, басууга оңой болуш үчүн */
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px; /* Тегеректелген квадрат */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e293b; /* Баскычтын өңү */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1001;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+   }
+
 /* =========================
    OVERLAY
 ========================= */
@@ -406,24 +425,7 @@
   .header-container {
     padding: 0 14px;
   }
-   .close-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: #f1f5f9; /* Бир аз бозомук фон, басууга оңой болуш үчүн */
-  border: none;
-  width: 45px;
-  height: 45px;
-  border-radius: 12px; /* Тегеректелген квадрат */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1e293b; /* Баскычтын өңү */
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 1001;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-   }
+ 
 }
 
 @media (max-width: 420px) {
