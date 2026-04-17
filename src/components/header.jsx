@@ -92,7 +92,6 @@ const Header = ({ user }) => {
               <li className="nav-item">
                 <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Башкы</Link>
               </li>
-
               <li className="nav-item dropdown-trigger" 
                   onMouseEnter={() => setDropdown('law')} 
                   onMouseLeave={() => setDropdown(null)}>
@@ -103,7 +102,6 @@ const Header = ({ user }) => {
                   <Link to="/service">Мамлекеттик кызмат</Link>
                 </div>
               </li>
-
               <li className="nav-item dropdown-trigger" 
                   onMouseEnter={() => setDropdown('test')} 
                   onMouseLeave={() => setDropdown(null)}>
@@ -123,7 +121,6 @@ const Header = ({ user }) => {
                 <span className="user-pill-name">{userName}</span>
                 <div className="user-avatar">{initial}</div>
               </button>
-
               {profileOpen && (
                 <div className="profile-dropdown-modal show">
                   <div className="p-modal-header">
@@ -160,7 +157,7 @@ const Header = ({ user }) => {
               <p>{user?.email}</p>
             </div>
           </div>
-          <button className="close-sidebar" onClick={() => setMobileMenuOpen(false)}><X size={24} /></button>
+          <button className="close-sidebar" onClick={() => setMobileMenuOpen(false)}>✕</button>
         </div>
         <div className="sidebar-body">
           <div className="sidebar-section">
@@ -168,7 +165,7 @@ const Header = ({ user }) => {
             <Link to="/" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
               <div className="link-content"><Home size={20} /> Башкы бет</div>
             </Link>
-
+            
             {/* Мыйзамдар */}
             <div className={`mobile-collapsible ${mobileSubMenu === 'law' ? 'open' : ''}`}>
               <button className="sidebar-link" onClick={() => toggleMobileSub('law')}>
@@ -213,49 +210,41 @@ const Header = ({ user }) => {
       {mobileMenuOpen && <div className="sidebar-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
 
       <style>{`
-        /* Негизги стилдерди сактоо */
-        .main-header { background: #6366f1; height: 70px; display: flex; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .header-container { width: 95%; max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .nav-link, .user-pill-name, .header-logo { color: white !important; text-decoration: none; font-weight: 500; }
-        .dropdown-panel { position: absolute; background: white; min-width: 200px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); border-radius: 8px; display: none; padding: 10px 0; }
-        .dropdown-panel.show { display: block; }
         .dropdown-panel a { color: #1e293b !important; padding: 10px 15px; display: block; text-decoration: none; }
         .dropdown-panel a:hover { background: #f1f5f9; }
+        .chev { transition: transform 0.3s; margin-left: 5px; stroke: white; }
+        .nav-item:hover .chev { transform: rotate(180deg); }
+
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; transform: translateX(120%); transition: transform 0.4s; }
+        .toast-container.show { transform: translateX(0); }
+        .toast-box { background: white; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 5px solid #6366f1; }
+        .toast-box.success { border-left-color: #2ecc71; color: #2ecc71; }
+        .toast-box.error { border-left-color: #e74c3c; color: #e74c3c; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 20000; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; cursor: pointer; }
+        .btn-confirm { flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 12px; cursor: pointer; }
         
-        /* Мобилдик версия - Сиздин "склед" каталарды оңдоо */
-        .mobile-sidebar { 
-          position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; 
-          background: white; z-index: 30000; transition: 0.3s ease; 
-          display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-        }
+        /* Мобилдик версия - Сиздин стилдерди бузбай толуктоо */
+        .mobile-sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: white; z-index: 30000; transition: 0.3s; display: flex; flex-direction: column; }
         .mobile-sidebar.active { right: 0; }
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 25000; backdrop-filter: blur(2px); }
-        
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 25000; }
         .sidebar-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
-        .user-avatar-lg { width: 45px; height: 45px; background: #6366f1; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .user-text h4 { margin: 0; font-size: 14px; }
-        .user-text p { margin: 0; font-size: 11px; color: #666; }
-        
         .sidebar-body { padding: 15px; overflow-y: auto; }
-        .sidebar-link { 
-          display: flex; align-items: center; justify-content: space-between; width: 100%; 
-          padding: 12px 10px; color: #333; text-decoration: none; border: none; background: none; font-size: 15px; 
-        }
+        .sidebar-link { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 10px; color: #333; text-decoration: none; border: none; background: none; font-size: 15px; }
         .link-content { display: flex; align-items: center; gap: 10px; }
         .mobile-sub-links { max-height: 0; overflow: hidden; transition: 0.3s; padding-left: 40px; }
         .mobile-collapsible.open .mobile-sub-links { max-height: 200px; }
         .mobile-collapsible.open .chev-icon { transform: rotate(180deg); }
         .mobile-sub-links a { display: block; padding: 8px 0; color: #666; text-decoration: none; font-size: 14px; }
-        
         .sidebar-section label { display: block; font-size: 11px; color: #999; margin: 15px 0 5px 10px; text-transform: uppercase; }
-        .logout-btn { color: #ef4444 !important; margin-top: 10px; }
-
-        @media (min-width: 769px) { .mobile-burger-btn { display: none; } }
-        @media (max-width: 768px) { .desktop-nav, .pc-profile-wrapper { display: none; } }
+        .logout-btn { color: #ef4444 !important; }
       `}</style>
     </>
   );
 };
 
 export default Header;
-    
