@@ -269,40 +269,7 @@ body {
   border-radius: 10px;
 }
 
-/* Тил которгучтун контейнери */
-.lang-switcher-container {
-  display: flex;
-  gap: 12px; /* Кнопкалардын аралыгы */
-}
 
-.lang-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  border: 2px solid #f1f3f5;
-  background: white;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #636e72;
-}
-
-.lang-btn svg {
-  stroke: #b2bec3;
-}
-
-.lang-btn.active {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.lang-btn.active svg {
-  stroke: white;
-}
 
 /* ТаймерBadge (Саат иконкасы менен) */
 .timer-badge {
@@ -340,4 +307,33 @@ body {
   .quiz-card {
     padding: 20px !important;
   }
+}
+
+
+
+/* Тил которгуч стили */
+.lang-mini-switcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.lang-mini-switcher button {
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  border-radius: 8px;
+}
+
+.lang-mini-switcher button.active-lang {
+  background: white;
+  color: #4f46e5;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

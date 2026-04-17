@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Link, useLocation } from 'react-router-dom';
-import { CheckCircle, XCircle, X, LogOut, Settings as SettingsIcon, History as HistoryIcon, Home, Scale, ClipboardCheck, ChevronDown } from 'lucide-react';
+import { CheckCircle, XCircle, X, LogOut, Settings as SettingsIcon, History as HistoryIcon, Home, Scale, ChevronDown } from 'lucide-react';
 
 const Header = ({ user }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -10,14 +10,14 @@ const Header = ({ user }) => {
   const [dropdown, setDropdown] = useState(null);
   const [mobileSubMenu, setMobileSubMenu] = useState(null);
   
-  // Toast жана Modal үчүн абал (state)
   const [toast, setToast] = useState({ show: false, type: '', text: '' });
-  const [modal, setModal] = useState({ show: false, onConfirm: null });
+  const [modal, setModal] = useState({ show: false });
 
   const location = useLocation();
 
+  // Колдонуучунун атын жана баш тамгасын коопсуз алуу
   const userName = user?.displayName || user?.email?.split('@')[0] || "Колдонуучу";
-  const initial = userName?.[0]?.toUpperCase() || "U";
+  const initial = userName.trim().charAt(0).toUpperCase() || "U";
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -28,7 +28,6 @@ const Header = ({ user }) => {
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // Toast көрсөтүү функциясы
   const showToast = (type, text) => {
     setToast({ show: true, type, text });
     setTimeout(() => setToast({ show: false, type: '', text: '' }), 3000);
@@ -36,12 +35,20 @@ const Header = ({ user }) => {
 
   const handleLogoutClick = (e) => {
     e.stopPropagation();
-    setModal({ show: true, onConfirm: executeLogout });
+    setModal({ show: true });
+    setProfileOpen(false); // Профиль менюсун жабуу
+    setMobileMenuOpen(false); // Мобилдик менюну жабуу
   };
 
-  const executeLogout = () => {
-    signOut(auth);
-    setModal({ show: false, onConfirm: null });
+  const executeLogout = async () => {
+    try {
+      await signOut(auth);
+      showToast('success', 'Ийгиликтүү чыктыңыз!');
+    } catch (error) {
+      showToast('error', 'Чыгууда ката кетти.');
+    } finally {
+      setModal({ show: false });
+    }
   };
 
   const toggleMobileSub = (menu) => {
@@ -58,18 +65,18 @@ const Header = ({ user }) => {
         </div>
       </div>
 
-      {/* --- ЧЫГУУНУ ЫРАСТОО (MODAL) --- */}
+      {/* --- MODAL --- */}
       {modal.show && (
-        <div className="modal-overlay" onClick={() => setModal({ show: false, onConfirm: null })}>
+        <div className="modal-overlay" onClick={() => setModal({ show: false })}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Чыгуу</h3>
-              <X size={20} onClick={() => setModal({ show: false, onConfirm: null })} style={{cursor:'pointer'}} />
+              <X size={20} onClick={() => setModal({ show: false })} style={{cursor:'pointer'}} />
             </div>
             <p>Чын эле аккаунттан чыккыңыз келеби?</p>
             <div className="modal-actions">
-              <button className="btn-cancel" onClick={() => setModal({ show: false, onConfirm: null })}>Жок</button>
-              <button className="btn-confirm" onClick={modal.onConfirm}>Ооба, чыгуу</button>
+              <button className="btn-cancel" onClick={() => setModal({ show: false })}>Жок</button>
+              <button className="btn-confirm" onClick={executeLogout}>Ооба, чыгуу</button>
             </div>
           </div>
         </div>
@@ -77,7 +84,6 @@ const Header = ({ user }) => {
 
       <header className="main-header" onClick={(e) => e.stopPropagation()}>
         <div className="header-container">
-          
           <div className="header-left">
             <Link to="/" className="header-logo">Тестке Даярдык</Link>
           </div>
@@ -104,8 +110,9 @@ const Header = ({ user }) => {
                   onMouseLeave={() => setDropdown(null)}>
                 <span className="nav-link">Тесттер <ChevronDown size={14} className="chev" /></span>
                 <div className={`dropdown-panel ${dropdown === 'test' ? 'show' : ''}`}>
-                  <Link to="/quiz/general">Жалпы тест</Link>
+                  <Link to="/quiz/normal">Кадимки</Link>
                   <Link to="/quiz/logic">Логика</Link>
+                  <Link to="/quiz/mixed">Аралаш</Link>
                 </div>
               </li>
             </ul>
@@ -122,7 +129,7 @@ const Header = ({ user }) => {
                 <div className="profile-dropdown-modal show">
                   <div className="p-modal-header">
                     <strong>{userName}</strong>
-                    <span>{user?.email}</span>
+                    <span style={{fontSize: '12px', color: '#64748b'}}>{user?.email}</span>
                   </div>
                   <hr />
                   <Link to="/history" className="p-modal-item"><HistoryIcon size={18} /> Менин тарыхым</Link>
@@ -165,7 +172,7 @@ const Header = ({ user }) => {
             <div className={`mobile-collapsible ${mobileSubMenu === 'law' ? 'open' : ''}`}>
               <button className="sidebar-link" onClick={() => toggleMobileSub('law')}>
                 <div className="link-content"><Scale size={20} /> Мыйзамдар</div>
-                <ChevronDown size={18} />
+                <ChevronDown size={18} className="chev-icon" />
               </button>
               <div className="mobile-sub-links">
                 <Link to="/constitution" onClick={() => setMobileMenuOpen(false)}>Конституция</Link>
@@ -179,9 +186,6 @@ const Header = ({ user }) => {
             <Link to="/history" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
               <HistoryIcon size={20} /> Менин тарыхым
             </Link>
-            <Link to="/settings" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
-              <SettingsIcon size={20} /> Настройка
-            </Link>
             <button className="sidebar-link logout-btn" onClick={handleLogoutClick}>
               <LogOut size={20} /> Чыгуу
             </button>
@@ -191,41 +195,27 @@ const Header = ({ user }) => {
       {mobileMenuOpen && <div className="sidebar-overlay" onClick={() => setMobileMenuOpen(false)}></div>}
 
       <style>{`
-        /* ТЕКСТТЕРДИ АК КЫЛУУ */
-        .nav-link, .user-pill-name, .header-logo { color: white !important; text-decoration: none; }
+        .nav-link, .user-pill-name, .header-logo { color: white !important; text-decoration: none; font-weight: 500; }
+        .dropdown-panel a { color: #1e293b !important; padding: 10px 15px; display: block; text-decoration: none; }
+        .dropdown-panel a:hover { background: #f1f5f9; }
         .chev { transition: transform 0.3s; margin-left: 5px; stroke: white; }
         .nav-item:hover .chev { transform: rotate(180deg); }
 
-        /* TOAST STYLE */
-        .toast-container {
-          position: fixed; top: 20px; right: 20px; z-index: 10000;
-          transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; transform: translateX(120%); transition: transform 0.4s; }
         .toast-container.show { transform: translateX(0); }
-        .toast-box {
-          background: white; padding: 12px 20px; border-radius: 12px;
-          display: flex; align-items: center; gap: 10px; font-weight: 600;
-          box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 5px solid #6366f1;
-        }
+        .toast-box { background: white; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 5px solid #6366f1; }
         .toast-box.success { border-left-color: #2ecc71; color: #2ecc71; }
         .toast-box.error { border-left-color: #e74c3c; color: #e74c3c; }
 
-        /* MODAL STYLE */
-        .modal-overlay {
-          position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7);
-          backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 20000;
-        }
-        .modal-content {
-          background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px;
-          animation: slideUp 0.3s ease;
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .modal-header h3 { margin: 0; color: #1e293b; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 20000; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; }
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; cursor: pointer; font-weight: 600; }
-        .btn-confirm { flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; cursor: pointer; }
+        .btn-confirm { flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 12px; cursor: pointer; }
+        
+        .mobile-sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: white; z-index: 30000; transition: 0.3s; }
+        .mobile-sidebar.active { right: 0; }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 25000; }
       `}</style>
     </>
   );

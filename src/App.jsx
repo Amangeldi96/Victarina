@@ -10,18 +10,17 @@ import Home from './components/home';
 import Constitution from './components/constitution';
 import Ethics from './components/ethics';
 import CivilService from './components/civilService';
-import History from './components/history';
-import Settings from './components/settings';
 
-// Тест компоненттери (файл аталыштарына так дал келди)
-import Test from './components/test';
+// Тест компоненттери 
+import Test from './components/normalTest';
 import LogicTest from './components/logicTest';
+import MixedTest from './components/mixedTest';
 
 // Маалыматтар
 import { constitutionData } from './data/constitutionData';
 import { ethicsCodeData } from './data/ethicsData';
 import { civilServiceData } from './data/civilServiceData';
-import { generalTestData } from './data/generalTestData';
+import { generalTestData } from './data/normalTestData';
 import { logicTestData } from './data/logicTestData';
 
 // Стилдер
@@ -34,6 +33,14 @@ import './components/css/constitution.css';
 const ProtectedRoute = ({ user, children }) => {
   return user ? children : <Navigate to="/login" replace />;
 };
+
+const mixedTestData = [
+  ...(generalTestData || []),
+  ...(logicTestData || [])
+].map((item, index) => ({
+  ...item,
+  id: index + 1
+}));
 
 function App() {
   const [user, setUser] = useState(null);
@@ -49,48 +56,10 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-if (loading) {
-  return (
-    <div className="home-container skeleton-wrapper">
-      {/* HEADER СКЕЛЕТИ */}
-      <header className="skeleton-header-nav">
-        <div className="sk-logo"></div>
-        <div className="sk-nav-items">
-          <div className="sk-nav-item"></div>
-          <div className="sk-nav-item"></div>
-          <div className="sk-nav-item"></div>
-        </div>
-      </header>
-
-      {/* Баннердин скелети */}
-      <div className="hero-banner skeleton-banner">
-        <div className="sk-title"></div>
-        <div className="sk-subtitle"></div>
-      </div>
-
-      {/* Күндүн беренесинин скелети */}
-      <div className="daily-article-card sk-daily-card">
-        <div className="sk-tag"></div>
-        <div className="sk-line large"></div>
-        <div className="sk-line full"></div>
-        <div className="sk-line full"></div>
-        <div className="sk-line medium"></div>
-      </div>
-
-      {/* Үч карточканын (Grid) скелети */}
-      <div className="main-grid">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="feature-card sk-card">
-            <div className="sk-icon"></div>
-            <div className="sk-line small center"></div>
-            <div className="sk-line full"></div>
-            <div className="sk-btn"></div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+  // Жүктөлүү учурунда көрсөтүлүүчү экран
+  if (loading) {
+    return <div className="loader">Жүктөлүүдө...</div>;
+  }
 
   return (
     <Router>
@@ -169,8 +138,16 @@ if (loading) {
     </ProtectedRoute>
   }
 />
-<Route path="/history" element={<History />} />
-<Route path="/settings" element={<Settings />} />
+
+               {/* 🌀 MIXED */}
+           <Route
+  path="/quiz/mixed"
+  element={
+    <ProtectedRoute user={user}>
+      <MixedTest data={mixedTestData} />
+    </ProtectedRoute>
+  }
+/>
 
             {/* Белгисиз маршруттар үчүн */}
             <Route path="*" element={<Navigate to="/" replace />} />

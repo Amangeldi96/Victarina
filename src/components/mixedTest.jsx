@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { db, auth } from '../firebase'; // Firebase импорттору
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-const Test = ({ data = [], titleKy, titleRu }) => {
+const mixedTest = ({ data = [], titleKy, titleRu }) => {
   const [lang, setLang] = useState('ky');
   const [isStarted, setIsStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -133,6 +133,7 @@ const Test = ({ data = [], titleKy, titleRu }) => {
       <button className={`lang-btn ${lang === 'ky' ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setLang('ky'); }}>
         KG
       </button>
+      <span className="divider">|</span>
       <button className={`lang-btn ${lang === 'ru' ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setLang('ru'); }}>
         RU
       </button>
@@ -195,52 +196,92 @@ const Test = ({ data = [], titleKy, titleRu }) => {
   const isSelected = (index) => (userAnswers[currentQuestion] || []).includes(index);
 
   return (
-    <div className="quiz-main-container">
-      <div className="quiz-card">
-        <div className="quiz-header">
-          <div className="quiz-header-left" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-            <span className="quiz-category-tag">{lang === 'ky' ? titleKy : titleRu}</span>
-            <div className="timer-badge">
-                <span className="timer">⏱ {formatTime(timeLeft)}</span>
-            </div>
-          </div>
-          <LangSwitcher />
-        </div>
-
-        <div className="quiz-progress-bar">
-          <div className="progress-fill" style={{ width: `${((currentQuestion + 1) / quizData.length) * 100}%` }}></div>
-        </div>
-
-        <div className="quiz-counter">{currentQuestion + 1} / {quizData.length}</div>
-        <h2 className="question-text">{lang === 'ky' ? currentQ.question_ky : currentQ.question_ru}</h2>
-
-        <div className="options-grid">
-          {(lang === 'ky' ? currentQ.options_ky : currentQ.options_ru).map((opt, i) => (
-            <div key={i} className={`option-card ${isSelected(i) ? 'selected' : ''}`} onClick={() => handleOptionClick(i)}>
-              <div className={`check-indicator ${currentQ.type}`}>
-                {isSelected(i) && <div className="check-dot" />}
-              </div>
-              <span className="option-label">{opt}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="nav-btns" style={{display: 'flex', justifyContent: 'space-between', marginTop: '30px'}}>
-          <button className="next-btn prev-btn" disabled={currentQuestion === 0} onClick={() => setCurrentQuestion(prev => prev - 1)} style={{margin: 0, width: '48%', background: '#f1f3f5', color: '#4a4a4a'}}>
-            {t.prev}
-          </button>
-          <button 
-            className={`next-btn ${(!userAnswers[currentQuestion] || userAnswers[currentQuestion].length === 0) ? 'disabled' : 'active'}`}
-            style={{margin: 0, width: '48%'}}
-            disabled={!userAnswers[currentQuestion] || userAnswers[currentQuestion].length === 0}
-            onClick={() => currentQuestion === quizData.length - 1 ? handleFinish() : setCurrentQuestion(prev => prev + 1)}
-          >
-            {currentQuestion === quizData.length - 1 ? t.finish : t.next}
-          </button>
+<div className="quiz-main-container">
+  <div className="quiz-card">
+    <div className="quiz-header">
+      
+      <div className="quiz-header-left" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+        <div className="timer-badge">
+          <span className="timer">⏱ {formatTime(timeLeft)}</span>
         </div>
       </div>
+      <div className="lang-mini-switcher">
+        <button 
+          onClick={() => setLang('ky')} 
+          className={lang === 'ky' ? 'active-lang' : ''}
+        >
+          KG
+        </button>
+
+        <span className="divider">|</span>
+
+        <button 
+          onClick={() => setLang('ru')} 
+          className={lang === 'ru' ? 'active-lang' : ''}
+        >
+          RU
+        </button>
+      </div>
+
     </div>
+
+    <div className="quiz-progress-bar">
+      <div 
+        className="progress-fill" 
+        style={{ width: `${((currentQuestion + 1) / quizData.length) * 100}%` }}
+      ></div>
+    </div>
+
+    <div className="quiz-counter">
+      {currentQuestion + 1} / {quizData.length}
+    </div>
+
+    <h2 className="question-text">
+      {lang === 'ky' ? currentQ.question_ky : currentQ.question_ru}
+    </h2>
+
+    <div className="options-grid">
+      {(lang === 'ky' ? currentQ.options_ky : currentQ.options_ru).map((opt, i) => (
+        <div 
+          key={i} 
+          className={`option-card ${isSelected(i) ? 'selected' : ''}`} 
+          onClick={() => handleOptionClick(i)}
+        >
+          <div className={`check-indicator ${currentQ.type}`}>
+            {isSelected(i) && <div className="check-dot" />}
+          </div>
+          <span className="option-label">{opt}</span>
+        </div>
+      ))}
+    </div>
+
+    <div className="nav-btns" style={{display: 'flex', justifyContent: 'space-between', marginTop: '30px'}}>
+      
+      <button 
+        className="next-btn prev-btn"
+        disabled={currentQuestion === 0}
+        onClick={() => setCurrentQuestion(prev => prev - 1)}
+        style={{margin: 0, width: '48%', background: '#f1f3f5', color: '#4a4a4a'}}
+      >
+        {t.prev}
+      </button>
+
+      <button 
+        className={`next-btn ${(!userAnswers[currentQuestion] || userAnswers[currentQuestion].length === 0) ? 'disabled' : 'active'}`}
+        style={{margin: 0, width: '48%'}}
+        disabled={!userAnswers[currentQuestion] || userAnswers[currentQuestion].length === 0}
+        onClick={() => currentQuestion === quizData.length - 1 
+          ? handleFinish() 
+          : setCurrentQuestion(prev => prev + 1)
+        }
+      >
+        {currentQuestion === quizData.length - 1 ? t.finish : t.next}
+      </button>
+
+    </div>
+  </div>
+</div>
   );
 };
 
-export default Test;
+export default mixedTest;
