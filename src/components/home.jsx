@@ -6,12 +6,14 @@ const Home = ({ constitutionData }) => {
   const navigate = useNavigate();
   const [randomArticle, setRandomArticle] = useState(null);
 
+  // Бардык беренелерди бир тизмеге жыйноо (Оптимизация)
   const allArticles = useMemo(() => {
     if (!constitutionData || constitutionData.length === 0) return [];
     return constitutionData.flatMap(section => section.articles || []);
   }, [constitutionData]);
 
   useEffect(() => {
+    // Эгер маалымат бар болсо, дароо бирөөнү тандайт
     if (allArticles.length > 0) {
       const random = allArticles[Math.floor(Math.random() * allArticles.length)];
       setRandomArticle(random);
@@ -25,11 +27,11 @@ const Home = ({ constitutionData }) => {
         <p>Кыргыз Республикасынын мыйзамдарын жана Конституциясын биз менен бирге терең үйрөнүңүз.</p>
       </div>
 
-      {/* КҮНДҮН БЕРЕНЕСИ ЖАНА СКЕЛЕТ */}
+{/* КҮНДҮН БЕРЕНЕСИ */}
       {randomArticle ? (
         <div 
           className="daily-article-card" 
-          onClick={() => navigate(`/constitution?article=${randomArticle.id}`)}
+          onClick={() => navigate(`/constitution?article=${randomArticle.id}`)} // ID жиберүү
           style={{ cursor: 'pointer' }}
         >
           <div className="daily-tag">Күндүн беренеси</div>
@@ -38,16 +40,10 @@ const Home = ({ constitutionData }) => {
           <span className="read-more">Толук окуу →</span>
         </div>
       ) : (
-        /* Сиздин CSS-теги скелет стилдериңиз эми бул жерде колдонулат */
-        <div className="daily-article-card sk-daily-card skeleton-wrapper">
-          <div className="sk-tag"></div>
-          <div className="sk-line large"></div>
-          <div className="sk-line full"></div>
-          <div className="sk-line full"></div>
-          <div className="sk-line medium"></div>
+        <div className="daily-article-card loading-skeleton">
+          <p>Маалымат жүктөлүүдө...</p>
         </div>
       )}
-
       <div className="main-grid">
         <div className="feature-card" onClick={() => navigate('/constitution')}>
           <div className="icon-box">📖</div>
@@ -56,7 +52,7 @@ const Home = ({ constitutionData }) => {
           <button className="go-btn">Окуу</button>
         </div>
 
-        <div className="feature-card quiz-card" onClick={() => navigate('/quiz/normal')}>
+        <div className="feature-card quiz-card" onClick={() => navigate('/tests')}>
           <div className="icon-box">📝</div>
           <h3>Тесттен өтүү</h3>
           <p>Өз билимиңизди текшерип, тест тапшырыңыз.</p>
@@ -75,4 +71,3 @@ const Home = ({ constitutionData }) => {
 };
 
 export default Home;
-      
