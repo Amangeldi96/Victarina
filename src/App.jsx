@@ -113,7 +113,7 @@ function App() {
 
             {/* 📝 Жалпы тест */}
             <Route
-              path="/quiz/general"
+              path="/quiz/normal"
               element={
                 <ProtectedRoute user={user}>
                   <Test
