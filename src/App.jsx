@@ -20,7 +20,7 @@ import MixedTest from './components/mixedTest';
 import { constitutionData } from './data/constitutionData';
 import { ethicsCodeData } from './data/ethicsData';
 import { civilServiceData } from './data/civilServiceData';
-import { generalTestData } from './data/normalTestData';
+import { normalTestData } from './data/normalTestData';
 import { logicTestData } from './data/logicTestData';
 
 // Стилдер
@@ -35,7 +35,7 @@ const ProtectedRoute = ({ user, children }) => {
 };
 
 const mixedTestData = [
-  ...(generalTestData || []),
+  ...(normalTestData || []),
   ...(logicTestData || [])
 ].map((item, index) => ({
   ...item,
@@ -111,40 +111,44 @@ function App() {
               }
             />
 
-            {/* 📝 Жалпы тест */}
-            <Route
-              path="/quiz/normal"
-              element={
-                <ProtectedRoute user={user}>
-                  <Test
-                    data={generalTestData || []}
-                    title="Жалпы тест"
-                  />
-                </ProtectedRoute>
-              }
-            />
+           {/* 📝 Жалпы тест */}
+<Route
+  path="/quiz/normal"
+  element={
+    <ProtectedRoute user={user}>
+      <Test
+        data={normalTestData || []}
+        titleKy="Кадимки тест"   
+        titleRu="Обычный тест"   
+      />
+    </ProtectedRoute>
+  }
+/>
 
-        {/* 🧠 Логикалык тест */}
+{/* 🧠 Логикалык тест */}
 <Route
   path="/quiz/logic"
   element={
     <ProtectedRoute user={user}>
       <LogicTest
-        // Маалыматтардын бош эмес экенин текшеребиз
-        data={logicTestData && logicTestData.length > 0 ? logicTestData : []} 
-        titleKy="Логикалык тест"
+        data={logicTestData || []} 
+        titleKy="Логикалык тест" 
         titleRu="Логика и мышление"
       />
     </ProtectedRoute>
   }
 />
 
-               {/* 🌀 MIXED */}
-           <Route
+{/* 🌀 Аралаш тест (Mixed) */}
+<Route
   path="/quiz/mixed"
   element={
     <ProtectedRoute user={user}>
-      <MixedTest data={mixedTestData} />
+      <MixedTest 
+        data={mixedTestData || []} 
+        titleKy="Аралаш тест"    // 👈 Бул жерге да titleKy кошуңуз
+        titleRu="Смешанный тест"
+      />
     </ProtectedRoute>
   }
 />
