@@ -4,8 +4,8 @@ import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 // Компоненттер
-import AuthForm from './components/AuthForm';
-import Header from './components/Header';
+import AuthForm from './components/authForm';
+import Header from './components/header';
 import Home from './components/home';
 import Constitution from './components/constitution';
 import Ethics from './components/ethics';
