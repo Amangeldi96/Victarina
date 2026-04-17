@@ -10,6 +10,9 @@ import Home from './components/home';
 import Constitution from './components/constitution';
 import Ethics from './components/ethics';
 import CivilService from './components/civilService';
+import History from './components/history';
+import Settings from './components/settings';
+
 
 // Тест компоненттери 
 import Test from './components/normalTest';
@@ -155,7 +158,10 @@ function App() {
 
             {/* Белгисиз маршруттар үчүн */}
             <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/history" element={<History />} />
+        <Route path="/settings" element={<Settings />} />
           </Routes>
+          
         </div>
       </div>
     </Router>
