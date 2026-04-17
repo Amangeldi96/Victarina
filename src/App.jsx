@@ -60,9 +60,47 @@ function App() {
   }, []);
 
   // Жүктөлүү учурунда көрсөтүлүүчү экран
-  if (loading) {
-    return <div className="loader">Жүктөлүүдө...</div>;
+    if (loading) {
+    return (
+      <div className="skeleton-wrapper" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Header скелети (Логотип жана Меню) */}
+        <div className="skeleton-header-nav" style={{ marginBottom: '30px' }}>
+          <div className="sk-logo"></div>
+          <div className="sk-nav-items">
+            <div className="sk-nav-item"></div>
+            <div className="sk-nav-item"></div>
+            <div className="sk-nav-item"></div>
+          </div>
+        </div>
+
+        {/* Баннердин ордуна чоң блок */}
+        <div className="hero-banner skeleton-banner" style={{ minHeight: '200px', marginBottom: '40px' }}>
+          <div className="sk-title" style={{ margin: '0 auto 20px auto' }}></div>
+          <div className="sk-subtitle" style={{ margin: '0 auto' }}></div>
+        </div>
+
+        {/* Күндүн беренеси же негизги контенттин скелети */}
+        <div className="daily-article-card sk-daily-card" style={{ marginBottom: '40px' }}>
+          <div className="sk-tag"></div>
+          <div className="sk-line large"></div>
+          <div className="sk-line full"></div>
+          <div className="sk-line full"></div>
+        </div>
+
+        {/* Карточкалардын скелети */}
+        <div className="main-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="feature-card sk-card">
+              <div className="sk-icon"></div>
+              <div className="sk-line small center"></div>
+              <div className="sk-btn"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
+
 
   return (
     <Router>
