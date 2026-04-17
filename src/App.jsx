@@ -10,6 +10,8 @@ import Home from './components/home';
 import Constitution from './components/constitution';
 import Ethics from './components/ethics';
 import CivilService from './components/civilService';
+import History from './components/history';
+import Settings from './components/settings';
 
 // Тест компоненттери (файл аталыштарына так дал келди)
 import Test from './components/test';
@@ -50,6 +52,16 @@ function App() {
 if (loading) {
   return (
     <div className="home-container skeleton-wrapper">
+      {/* HEADER СКЕЛЕТИ */}
+      <header className="skeleton-header-nav">
+        <div className="sk-logo"></div>
+        <div className="sk-nav-items">
+          <div className="sk-nav-item"></div>
+          <div className="sk-nav-item"></div>
+          <div className="sk-nav-item"></div>
+        </div>
+      </header>
+
       {/* Баннердин скелети */}
       <div className="hero-banner skeleton-banner">
         <div className="sk-title"></div>
@@ -157,6 +169,8 @@ if (loading) {
     </ProtectedRoute>
   }
 />
+<Route path="/history" element={<History />} />
+<Route path="/settings" element={<Settings />} />
 
             {/* Белгисиз маршруттар үчүн */}
             <Route path="*" element={<Navigate to="/" replace />} />

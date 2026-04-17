@@ -241,3 +241,43 @@
   height: 35px;
   margin: 15px auto 0 auto;
 }
+/* Header скелетинин контейнери */
+.skeleton-header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5%;
+  background: white;
+  border-bottom: 1px solid #eee;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+/* Логотиптин ордуна тегерек же сүйрү форма */
+.sk-logo {
+  width: 120px;
+  height: 35px;
+  background: #e0e0e0;
+  border-radius: 8px;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Меню пункттарынын скелети */
+.sk-nav-items {
+  display: flex;
+  gap: 20px;
+}
+
+.sk-nav-item {
+  width: 70px;
+  height: 15px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* Shimmer анимациясы мурунку коддо бар, ошону колдонот */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

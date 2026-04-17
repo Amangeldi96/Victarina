@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './css/constitution.css';
 
 const Constitution = ({ data }) => {
@@ -6,10 +7,11 @@ const Constitution = ({ data }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [openSection, setOpenSection] = useState(null);
   const [selectedArticle, setSelectedArticle] = useState(null);
+  
+  const location = useLocation();
 
-  // 1. Издөө жана чыпкалоо (универсалдуу структура)
+  // 1. Издөө жана чыпкалоо логикасы
   const filteredSections = (data || []).map(item => {
-    // 'articles' же 'clauses' экөөнү тең текшеребиз
     const list = item.articles || item.clauses || [];
     const matched = list.filter(art => {
       const titleText = art.title?.[lang] || "";
@@ -22,15 +24,43 @@ const Constitution = ({ data }) => {
     return { ...item, displayList: matched };
   }).filter(item => item.displayList.length > 0);
 
-  // 2. Биринчи жолу ачылганда биринчи статьяны тандап алуу
+  // 2. БЕРЕНЕНИ ТАНДОО ЖАНА АККОРДЕОНДУ БАШКАРУУ
   useEffect(() => {
-    if (!selectedArticle && data && data.length > 0) {
-      const firstList = data[0].articles || data[0].clauses || [];
-      if (firstList.length > 0) {
-        setSelectedArticle(firstList[0]);
+    if (!data || data.length === 0) return;
+
+    const queryParams = new URLSearchParams(location.search);
+    const articleIdFromUrl = queryParams.get('article');
+
+    // А) Эгер Күндүн беренеси аркылуу ID менен келсе
+    if (articleIdFromUrl) {
+      let foundArt = null;
+      let foundSIndex = null;
+
+      data.forEach((section, sIndex) => {
+        const list = section.articles || section.clauses || [];
+        const art = list.find(a => String(a.id) === String(articleIdFromUrl));
+        if (art) {
+          foundArt = art;
+          foundSIndex = sIndex;
+        }
+      });
+
+      if (foundArt) {
+        setSelectedArticle(foundArt);
+        setOpenSection(foundSIndex); // Тандалган берененин бөлүмүн ачабыз
+        return; 
       }
     }
-  }, [data, selectedArticle]);
+
+    // Б) Эгер жөн эле менюдан кирсе (URL'де ID жок болсо)
+    if (!selectedArticle) {
+      const firstList = data[0].articles || data[0].clauses || [];
+      if (firstList.length > 0) {
+        setSelectedArticle(firstList[0]); // 1-беренени мазмунга чыгарабыз
+        setOpenSection(null); // БИРОК аккордеондорду жабык кармайбыз
+      }
+    }
+  }, [data, location.search]);
 
   if (!data || data.length === 0) {
     return <div className="loader">Маалымат жүктөлүүдө...</div>;
@@ -40,6 +70,7 @@ const Constitution = ({ data }) => {
     <div className="constitution-wrapper">
       <div className="article-sidebar">
         
+        {/* Тил которгуч */}
         <div className="language-switcher">
           <button 
             className={lang === 'ky' ? 'active-lang' : ''} 
@@ -51,6 +82,7 @@ const Constitution = ({ data }) => {
           >RU</button>
         </div>
 
+        {/* Издөө кутучасы */}
         <div className="search-box-container">
           <input
             className="search-input"
@@ -61,6 +93,7 @@ const Constitution = ({ data }) => {
           />
         </div>
 
+        {/* Сол жактагы тизме (Аккордеон) */}
         <div className="article-list">
           {filteredSections.map((item, sIndex) => (
             <div key={item.id || sIndex} className="accordion-group">
@@ -68,7 +101,6 @@ const Constitution = ({ data }) => {
                 className={`accordion-title ${openSection === sIndex ? 'active' : ''}`}
                 onClick={() => setOpenSection(openSection === sIndex ? null : sIndex)}
               >
-                {/* 'title' же 'section' экөөнүн бирин чыгарат */}
                 <span>{item.title?.[lang] || item.section?.[lang]}</span>
                 <span className="arrow">{openSection === sIndex ? '−' : '+'}</span>
               </div>
@@ -89,6 +121,7 @@ const Constitution = ({ data }) => {
         </div>
       </div>
 
+      {/* Оң жактагы мазмун терезеси */}
       <div className="article-content">
         {selectedArticle ? (
           <div className="content-card">

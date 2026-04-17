@@ -68,6 +68,13 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  color: white !important; /* Шилтеменин өңүн ачык ак кылат */
+  text-decoration: none;    /* Астындагы сызыкты алып салат */
+  transition: 0.3s;
+}
+
+.nav-link:hover {
+  opacity: 0.8; /* Hover болгондо бир аз тунарып, реакция берет */
 }
 
 /* CHEVRON */
@@ -125,9 +132,10 @@
   position: relative;
 }
 
+/* Профиль баскычынын ичиндеги тексттин өңүн ак кылуу */
 .user-pill {
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   padding: 6px 10px 6px 14px;
   border-radius: 999px;
   display: flex;
@@ -136,17 +144,11 @@
   cursor: pointer;
   transition: 0.2s;
   min-height: 40px;
+  /* ТӨМӨНКҮЛӨРДҮ КОШУҢУЗ: */
+  color: white !important; /* Баскычтын ичиндеги бардык текстти ак кылат */
 }
 
-.user-pill:hover {
-  background: rgba(255,255,255,0.28);
-  transform: translateY(-1px);
-}
-
-.user-pill:active {
-  transform: scale(0.98);
-}
-
+/* Эгер аты гана кара болуп жатса, ушул жерди да текшериңиз */
 .user-pill-name {
   font-size: 0.9rem;
   font-weight: 600;
@@ -154,8 +156,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: white !important; /* Атын так ак кылуу */
 }
 
+/* Аватардын ичиндеги тамга кара болуп калса */
 .user-avatar {
   width: 34px;
   height: 34px;
@@ -165,7 +169,7 @@
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: white;
+  color: white !important; /* Аватар тамгасын ак кылуу */
   flex-shrink: 0;
 }
 
