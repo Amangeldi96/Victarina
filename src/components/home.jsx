@@ -52,7 +52,7 @@ const Home = ({ constitutionData }) => {
           <button className="go-btn">Окуу</button>
         </div>
 
-        <div className="feature-card quiz-card" onClick={() => navigate('/normalTest')}>
+        <div className="feature-card quiz-card" onClick={() => navigate('/normal')}>
           <div className="icon-box">📝</div>
           <h3>Тесттен өтүү</h3>
           <p>Өз билимиңизди текшерип, тест тапшырыңыз.</p>
