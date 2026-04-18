@@ -125,7 +125,7 @@ const Header = ({ user }) => {
                 <div className="profile-dropdown-modal show">
                   <div className="p-modal-header">
                     <strong>{userName}</strong>
-                    <span style={{fontSize: '12px', color: '#64748b'}}>{user?.email}</span>
+                    <span style={{fontSize: '12px', color: '#ffffff'}}>{user?.email}</span>
                   </div>
                   <hr />
                   <Link to="/history" className="p-modal-item"><HistoryIcon size={18} /> Менин тарыхым</Link>
