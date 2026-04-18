@@ -210,4 +210,8 @@ const Settings = () => {
 };
 
 export default Settings;
+<<<<<<< HEAD
     
+=======
+    
+>>>>>>> 146f79736a6270a36c8266fade8599639544f8be
