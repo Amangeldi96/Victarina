@@ -13,26 +13,20 @@ const Settings = () => {
   const [newPass, setNewPass] = useState("");
   const [loading, setLoading] = useState(false);
   
-  // Toast абалы
   const [toast, setToast] = useState({ show: false, type: '', text: '' });
-  
-  // Модалдык терезе абалы
   const [modal, setModal] = useState({ show: false, title: '', text: '', onConfirm: null });
 
-  // --- Билдирүү (Toast) функциясы ---
   const showToast = (type, text) => {
     setToast({ show: true, type, text });
-    setTimeout(() => setToast({ ...toast, show: false }), 4000);
+    setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4000);
   };
 
-  // --- Ырастоо (Modal) чакыруу ---
   const askConfirmation = (title, text, confirmAction) => {
     setModal({ show: true, title, text, onConfirm: confirmAction });
   };
 
   const closeModal = () => setModal({ ...modal, show: false });
 
-  // --- ФУНКЦИЯЛАР ---
   const handleUpdateName = async () => {
     if (!name.trim()) return;
     setLoading(true);
@@ -58,14 +52,6 @@ const Settings = () => {
     setLoading(false);
   };
 
-  const confirmClearHistory = () => {
-    askConfirmation(
-      "Тарыхты тазалоо", 
-      "Бардык тесттердин жыйынтыктары биротоло өчүрүлөт. Макулсузбу?", 
-      executeClearHistory
-    );
-  };
-
   const executeClearHistory = async () => {
     setLoading(true);
     closeModal();
@@ -81,14 +67,6 @@ const Settings = () => {
     setLoading(false);
   };
 
-  const confirmDeleteAccount = () => {
-    askConfirmation(
-      "Аккаунтту өчүрүү", 
-      "Сиздин профилиңиз жана бардык маалыматтарыңыз биротоло жок кылынат. Бул аракетти артка кайтарып болбойт!", 
-      executeDeleteAccount
-    );
-  };
-
   const executeDeleteAccount = async () => {
     setLoading(true);
     closeModal();
@@ -102,127 +80,134 @@ const Settings = () => {
   };
 
   return (
-    <div style={{ background: '#f8fafc', minHeight: '100vh', padding: '40px 20px', fontFamily: "'Poppins', sans-serif" }}>
+    <div className="settings-page">
       
-      {/* --- ТОСТ БИЛДИРҮҮ (TOAST) --- */}
-      <div className={`toast-container`}>
-        <div className={`toast ${toast.show ? 'show' : ''} ${toast.type}`}>
-          {toast.type === 'success' ? <CheckCircle size={20} color="#2ecc71" /> : <XCircle size={20} color="#e74c3c" />}
+      {/* TOAST */}
+      <div className={`toast-container ${toast.show ? 'show' : ''}`}>
+        <div className={`toast-box ${toast.type}`}>
+          {toast.type === 'success' ? <CheckCircle size={20} /> : <XCircle size={20} />}
           <span>{toast.text}</span>
         </div>
       </div>
 
-      {/* --- МОДАЛДЫК ТЕРЕЗЕ (CONFIRMATION) --- */}
+      {/* MODAL */}
       {modal.show && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', color: '#1e293b' }}>{modal.title}</h3>
-              <X size={20} onClick={closeModal} style={{ cursor: 'pointer', color: '#94a3b8' }} />
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{modal.title}</h3>
+              <X size={20} onClick={closeModal} className="close-icon" />
             </div>
-            <p style={{ color: '#64748b', fontSize: '14px', lineHeight: '1.6', marginBottom: '25px' }}>{modal.text}</p>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <p className="modal-text">{modal.text}</p>
+            <div className="modal-actions">
               <button onClick={closeModal} className="btn-secondary">Жок</button>
-              <button onClick={modal.onConfirm} className="btn-confirm">Ооба, аткаруу</button>
+              <button onClick={modal.onConfirm} className="btn-confirm">Ооба</button>
             </div>
           </div>
         </div>
       )}
 
-      <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', marginBottom: '30px', textAlign: 'center' }}>Орнотуулар</h1>
+      <div className="settings-container">
+        <h1 className="settings-title">Орнотуулар</h1>
 
-        <div style={{ display: 'grid', gap: '16px' }}>
+        <div className="settings-grid">
           
-          <div style={cardStyle}>
-            <div style={headerStyle}><User size={20} color="#6366f1"/> <span>Жеке маалымат</span></div>
-            <div style={{ marginTop: '15px' }}>
-              <label style={labelStyle}>Аты-жөнүңүз</label>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} placeholder="Атыңызды жазыңыз" />
-                <button onClick={handleUpdateName} disabled={loading} style={smallBtnStyle('#6366f1')}>Сактоо</button>
+          <div className="settings-card">
+            <div className="card-header"><User size={20} color="#6366f1"/> <span>Жеке маалымат</span></div>
+            <div className="card-body">
+              <label>Аты-жөнүңүз</label>
+              <div className="input-group">
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Атыңыз" />
+                <button onClick={handleUpdateName} disabled={loading} className="btn-save blue">Сактоо</button>
               </div>
             </div>
           </div>
 
-          <div style={cardStyle}>
-            <div style={headerStyle}><Lock size={20} color="#10b981"/> <span>Коопсуздук</span></div>
-            <div style={{ marginTop: '15px' }}>
-              <label style={labelStyle}>Жаңы пароль</label>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <input style={inputStyle} type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)} placeholder="******" />
-                <button onClick={handleUpdatePassword} disabled={loading} style={smallBtnStyle('#10b981')}>Жаңыртуу</button>
+          <div className="settings-card">
+            <div className="card-header"><Lock size={20} color="#10b981"/> <span>Коопсуздук</span></div>
+            <div className="card-body">
+              <label>Жаңы пароль</label>
+              <div className="input-group">
+                <input type="password" value={newPass} onChange={(e) => setNewPass(e.target.value)} placeholder="******" />
+                <button onClick={handleUpdatePassword} disabled={loading} className="btn-save green">Жаңыртуу</button>
               </div>
             </div>
           </div>
 
-          <div style={cardStyle}>
-            <div style={headerStyle}><History size={20} color="#f59e0b"/> <span>Маалыматтарды башкаруу</span></div>
-            <div style={{ marginTop: '15px' }}>
-              <div style={listOptionStyle} onClick={confirmClearHistory}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#475569' }}>
-                  <Trash2 size={18} /> <span>Тесттердин тарыхын тазалоо</span>
+          <div className="settings-card">
+            <div className="card-header"><History size={20} color="#f59e0b"/> <span>Башкаруу</span></div>
+            <div className="card-body">
+              <div className="list-option" onClick={() => askConfirmation("Тазалоо", "Тарыхты өчүрөсүзбү?", executeClearHistory)}>
+                <div className="list-info">
+                  <Trash2 size={18} /> <span>Тарыхты тазалоо</span>
                 </div>
                 <ChevronRight size={18} color="#94a3b8" />
               </div>
             </div>
           </div>
 
-          <div style={{ ...cardStyle, border: '1px solid #fee2e2' }}>
-            <div style={headerStyle}><AlertTriangle size={20} color="#ef4444"/> <span style={{color: '#ef4444'}}>Кооптуу зона</span></div>
-            <button onClick={confirmDeleteAccount} style={btnDangerStyle} disabled={loading}>Аккаунтту биротоло өчүрүү</button>
+          <div className="settings-card danger-card">
+            <div className="card-header"><AlertTriangle size={20} color="#ef4444"/> <span style={{color: '#ef4444'}}>Кооптуу зона</span></div>
+            <button onClick={() => askConfirmation("Өчүрүү", "Аккаунтту биротоло өчүрөсүзбү?", executeDeleteAccount)} className="btn-danger-full" disabled={loading}>Аккаунтту өчүрүү</button>
           </div>
 
         </div>
       </div>
 
-      {/* --- СТИЛДЕР (CSS-IN-JS) --- */}
       <style>{`
-        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 99999; }
-        .toast { 
-          background: white; color: #333; padding: 15px 25px; border-radius: 12px;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); margin-bottom: 10px;
-          display: flex; align-items: center; gap: 12px; font-weight: 500;
-          transform: translateX(150%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          border-left: 5px solid #5995fd;
-        }
-        .toast.show { transform: translateX(0); }
-        .toast.success { border-left-color: #2ecc71; }
-        .toast.error { border-left-color: #e74c3c; }
+        .settings-page { background: #f8fafc; min-height: 100vh; padding: 20px 15px; font-family: 'Inter', sans-serif; }
+        .settings-container { max-width: 500px; margin: 0 auto; padding-top: 20px; }
+        .settings-title { font-size: 24px; font-weight: 800; color: #1e293b; margin-bottom: 25px; text-align: center; }
+        .settings-grid { display: grid; gap: 16px; }
+        
+        .settings-card { background: #fff; padding: 20px; borderRadius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; border-radius: 20px; }
+        .danger-card { border: 1px solid #fee2e2; }
+        
+        .card-header { display: flex; align-items: center; gap: 12px; font-size: 16px; fontWeight: 700; color: #1e293b; font-weight: bold; margin-bottom: 15px; }
+        .card-body label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
+        
+        /* Инпуттар жана баскычтар мобилдикте астына түшөт */
+        .input-group { display: flex; gap: 10px; }
+        .input-group input { flex: 1; padding: 12px 15px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; font-size: 14px; width: 100%; }
+        
+        .btn-save { padding: 0 20px; border-radius: 12px; border: none; color: white; font-weight: 600; cursor: pointer; font-size: 14px; white-space: nowrap; }
+        .btn-save.blue { background: #6366f1; }
+        .btn-save.green { background: #10b981; }
 
-        .modal-overlay {
-          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-          display: flex; align-items: center; justify-content: center; z-index: 100000;
-          animation: fadeIn 0.2s ease;
-        }
-        .modal-content {
-          background: white; padding: 30px; border-radius: 24px; width: 90%; max-width: 400px;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); animation: slideUp 0.3s ease;
-        }
-        .btn-secondary {
-          flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;
-          background: #f8fafc; color: #64748b; font-weight: 600; cursor: pointer;
-        }
-        .btn-confirm {
-          flex: 1; padding: 12px; border-radius: 12px; border: none;
-          background: #ef4444; color: white; font-weight: 600; cursor: pointer;
+        .list-option { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; cursor: pointer; }
+        .list-info { display: flex; align-items: center; gap: 12px; color: #475569; font-size: 14px; }
+        
+        .btn-danger-full { width: 100%; padding: 14px; background: white; color: #ef4444; border: 1.5px solid #fee2e2; border-radius: 12px; fontWeight: 700; font-size: 14px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+
+        /* Мобилдик адаптация */
+        @media (max-width: 480px) {
+          .input-group { flex-direction: column; }
+          .btn-save { padding: 12px; width: 100%; }
+          .settings-title { font-size: 20px; }
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* TOAST СТИЛИ */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; transform: translateX(150%); transition: 0.4s ease; }
+        .toast-container.show { transform: translateX(0); }
+        .toast-box { background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; border-left: 5px solid #6366f1; }
+        .toast-box.success { border-left-color: #2ecc71; color: #2ecc71; }
+        .toast-box.error { border-left-color: #ef4444; color: #ef4444; }
+
+        /* MODAL СТИЛИ */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 350px; animation: slideUp 0.3s ease; }
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .modal-text { color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; }
+        .btn-secondary, .btn-confirm { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-secondary { background: #f1f5f9; color: #64748b; }
+        .btn-confirm { background: #ef4444; color: white; }
+
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
       `}</style>
     </div>
   );
 };
 
-// --- Жөнөкөй Стилдер ---
-const cardStyle = { background: '#fff', padding: '20px', borderRadius: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.02)', border: '1px solid #f1f5f9' };
-const headerStyle = { display: 'flex', alignItems: 'center', gap: '12px', fontSize: '16px', fontWeight: '700', color: '#1e293b' };
-const labelStyle = { display: 'block', fontSize: '12px', color: '#94a3b8', marginBottom: '6px', marginLeft: '2px', fontWeight: '600' };
-const inputStyle = { flex: 1, padding: '10px 14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '14px' };
-const smallBtnStyle = (bg) => ({ background: bg, color: '#fff', border: 'none', padding: '0 16px', borderRadius: '12px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' });
-const listOptionStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', cursor: 'pointer' };
-const btnDangerStyle = { width: '100%', padding: '12px', background: '#fff', color: '#ef4444', border: '1.5px solid #fee2e2', borderRadius: '12px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', marginTop: '15px' };
-
 export default Settings;
+    

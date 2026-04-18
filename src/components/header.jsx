@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Link, useLocation } from 'react-router-dom';
-import { CheckCircle, XCircle, X, LogOut, Settings as SettingsIcon, History as HistoryIcon, Home, Scale, ChevronDown } from 'lucide-react';
+import { CheckCircle, XCircle, X, LogOut, Settings as SettingsIcon, History as HistoryIcon, Home, Scale, ChevronDown, BookOpen } from 'lucide-react';
 
 const Header = ({ user }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
   const [mobileSubMenu, setMobileSubMenu] = useState(null);
+
+  const navigate = useNavigate();
   
   const [toast, setToast] = useState({ show: false, type: '', text: '' });
   const [modal, setModal] = useState({ show: false });
 
   const location = useLocation();
 
-  // Колдонуучунун атын жана баш тамгасын коопсуз алуу
   const userName = user?.displayName || user?.email?.split('@')[0] || "Колдонуучу";
   const initial = userName.trim().charAt(0).toUpperCase() || "U";
 
@@ -36,20 +38,23 @@ const Header = ({ user }) => {
   const handleLogoutClick = (e) => {
     e.stopPropagation();
     setModal({ show: true });
-    setProfileOpen(false); // Профиль менюсун жабуу
-    setMobileMenuOpen(false); // Мобилдик менюну жабуу
+    setProfileOpen(false);
+    setMobileMenuOpen(false);
   };
 
-  const executeLogout = async () => {
-    try {
-      await signOut(auth);
-      showToast('success', 'Ийгиликтүү чыктыңыз!');
-    } catch (error) {
-      showToast('error', 'Чыгууда ката кетти.');
-    } finally {
-      setModal({ show: false });
-    }
-  };
+const executeLogout = async () => {
+  try {
+    await signOut(auth);
+    showToast('success', 'Ийгиликтүү чыктыңыз!');
+    
+    navigate('/login'); // 👈 МААНИЛҮҮ
+    
+  } catch (error) {
+    showToast('error', 'Чыгууда ката кетти.');
+  } finally {
+    setModal({ show: false });
+  }
+};
 
   const toggleMobileSub = (menu) => {
     setMobileSubMenu(prev => (prev === menu ? null : menu));
@@ -93,7 +98,6 @@ const Header = ({ user }) => {
               <li className="nav-item">
                 <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Башкы</Link>
               </li>
-
               <li className="nav-item dropdown-trigger" 
                   onMouseEnter={() => setDropdown('law')} 
                   onMouseLeave={() => setDropdown(null)}>
@@ -104,7 +108,6 @@ const Header = ({ user }) => {
                   <Link to="/service">Мамлекеттик кызмат</Link>
                 </div>
               </li>
-
               <li className="nav-item dropdown-trigger" 
                   onMouseEnter={() => setDropdown('test')} 
                   onMouseLeave={() => setDropdown(null)}>
@@ -124,12 +127,11 @@ const Header = ({ user }) => {
                 <span className="user-pill-name">{userName}</span>
                 <div className="user-avatar">{initial}</div>
               </button>
-
               {profileOpen && (
                 <div className="profile-dropdown-modal show">
                   <div className="p-modal-header">
                     <strong>{userName}</strong>
-                    <span style={{fontSize: '12px', color: '#64748b'}}>{user?.email}</span>
+                    <span style={{fontSize: '12px', color: '#ffffff'}}>{user?.email}</span>
                   </div>
                   <hr />
                   <Link to="/history" className="p-modal-item"><HistoryIcon size={18} /> Менин тарыхым</Link>
@@ -167,8 +169,10 @@ const Header = ({ user }) => {
           <div className="sidebar-section">
             <label>Меню</label>
             <Link to="/" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
-              <Home size={20} /> Башкы бет
+              <div className="link-content"><Home size={20} /> Башкы бет</div>
             </Link>
+            
+            {/* Мыйзамдар */}
             <div className={`mobile-collapsible ${mobileSubMenu === 'law' ? 'open' : ''}`}>
               <button className="sidebar-link" onClick={() => toggleMobileSub('law')}>
                 <div className="link-content"><Scale size={20} /> Мыйзамдар</div>
@@ -180,14 +184,31 @@ const Header = ({ user }) => {
                 <Link to="/service" onClick={() => setMobileMenuOpen(false)}>Мамлекеттик кызмат</Link>
               </div>
             </div>
+
+            {/* Тесттер (Сизде жок эле, коштум) */}
+            <div className={`mobile-collapsible ${mobileSubMenu === 'test' ? 'open' : ''}`}>
+              <button className="sidebar-link" onClick={() => toggleMobileSub('test')}>
+                <div className="link-content"><BookOpen size={20} /> Тесттер</div>
+                <ChevronDown size={18} className="chev-icon" />
+              </button>
+              <div className="mobile-sub-links">
+                <Link to="/quiz/normal" onClick={() => setMobileMenuOpen(false)}>Кадимки</Link>
+                <Link to="/quiz/logic" onClick={() => setMobileMenuOpen(false)}>Логика</Link>
+                <Link to="/quiz/mixed" onClick={() => setMobileMenuOpen(false)}>Аралаш</Link>
+              </div>
+            </div>
           </div>
+
           <div className="sidebar-section">
             <label>Профиль</label>
             <Link to="/history" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
-              <HistoryIcon size={20} /> Менин тарыхым
+              <div className="link-content"><HistoryIcon size={20} /> Менин тарыхым</div>
+            </Link>
+            <Link to="/settings" className="sidebar-link" onClick={() => setMobileMenuOpen(false)}>
+              <div className="link-content"><SettingsIcon size={20} /> Настройка</div>
             </Link>
             <button className="sidebar-link logout-btn" onClick={handleLogoutClick}>
-              <LogOut size={20} /> Чыгуу
+              <div className="link-content"><LogOut size={20} /> Чыгуу</div>
             </button>
           </div>
         </div>
@@ -213,9 +234,20 @@ const Header = ({ user }) => {
         .btn-cancel { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; cursor: pointer; }
         .btn-confirm { flex: 1; padding: 12px; background: #ef4444; color: white; border: none; border-radius: 12px; cursor: pointer; }
         
-        .mobile-sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: white; z-index: 30000; transition: 0.3s; }
+        /* Мобилдик версия - Сиздин стилдерди бузбай толуктоо */
+        .mobile-sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: white; z-index: 30000; transition: 0.3s; display: flex; flex-direction: column; }
         .mobile-sidebar.active { right: 0; }
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 25000; }
+        .sidebar-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+        .sidebar-body { padding: 15px; overflow-y: auto; }
+        .sidebar-link { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 10px; color: #333; text-decoration: none; border: none; background: none; font-size: 15px; }
+        .link-content { display: flex; align-items: center; gap: 10px; }
+        .mobile-sub-links { max-height: 0; overflow: hidden; transition: 0.3s; padding-left: 40px; }
+        .mobile-collapsible.open .mobile-sub-links { max-height: 200px; }
+        .mobile-collapsible.open .chev-icon { transform: rotate(180deg); }
+        .mobile-sub-links a { display: block; padding: 8px 0; color: #666; text-decoration: none; font-size: 14px; }
+        .sidebar-section label { display: block; font-size: 11px; color: #999; margin: 15px 0 5px 10px; text-transform: uppercase; }
+        .logout-btn { color: #ef4444 !important; }
       `}</style>
     </>
   );
