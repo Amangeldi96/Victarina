@@ -124,7 +124,7 @@ const Header = ({ user }) => {
               {profileOpen && (
                 <div className="profile-dropdown-modal show">
                   <div className="p-modal-header">
-                    <strong>{userName}</strong>
+                    <strong style={{color: '#8d1111'}}>{userName}</strong>
                     <span style={{fontSize: '12px', color: '#ffffff'}}>{user?.email}</span>
                   </div>
                   <hr />
